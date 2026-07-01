@@ -1,0 +1,37 @@
+{
+  "name": "todoclick-backend",
+  "version": "0.1.0",
+  "description": "API backend de TodoClick — Mercado Pago, Cloudinary, Correo Argentino y Firebase Admin.",
+  "type": "module",
+  "main": "src/index.js",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js",
+    "seed": "node scripts/seed.js",
+    "set-admin": "node scripts/setAdminClaim.js",
+    "lint": "eslint .",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "axios": "^1.7.9",
+    "cloudinary": "^2.5.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.4.1",
+    "express-validator": "^7.2.0",
+    "firebase-admin": "^13.0.2",
+    "helmet": "^8.0.0",
+    "mercadopago": "^2.1.0",
+    "morgan": "^1.10.0",
+    "pino": "^9.5.0",
+    "pino-http": "^10.3.0"
+  },
+  "devDependencies": {
+    "eslint": "^9.17.0",
+    "pino-pretty": "^13.0.0"
+  }
+}

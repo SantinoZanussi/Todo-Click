@@ -1,0 +1,88 @@
+name: todoclick
+description: "TodoClick — E-commerce estilo Shein/Temu para Argentina."
+publish_to: 'none'
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.11.5
+
+# ─────────────────────────────────────────────────────────────────────────────
+# NOTA (Fase 1 — Arquitectura):
+# Acá declaramos el stack completo. La resolución/instalación real
+# (`flutter pub get`) y la configuración por plataforma se realizan en la
+# Fase 3 ("Configuración Flutter"). Las versiones usan rangos `^` y se fijan
+# definitivamente en esa fase.
+# ─────────────────────────────────────────────────────────────────────────────
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+
+  # Gestión de estado + Inyección de dependencias
+  # Usamos providers/Notifiers manuales (sin riverpod_generator): evita un
+  # conflicto conocido entre su analyzer_plugin transitivo y el analyzer actual,
+  # y el resultado es igual de type-safe y production-grade.
+  flutter_riverpod: ^2.6.1
+
+  # Navegación
+  go_router: ^14.6.2
+
+  # Programación funcional / igualdad de valor (capa de dominio)
+  dartz: ^0.10.1
+  equatable: ^2.0.7
+
+  # Firebase
+  firebase_core: ^3.8.0
+  firebase_auth: ^5.3.4
+  cloud_firestore: ^5.6.0
+  firebase_messaging: ^15.1.6
+
+  # Autenticación social
+  google_sign_in: ^6.2.2
+  sign_in_with_apple: ^6.1.3
+
+  # Networking (backend Node + APIs)
+  dio: ^5.7.0
+
+  # Almacenamiento local (carrito de invitado, preferencias)
+  # Nota: la sesión de auth la persiste Firebase Auth nativamente; no usamos
+  # secure_storage (además rompía la compilación a WebAssembly).
+  shared_preferences: ^2.3.3
+
+  # Imágenes
+  cached_network_image: ^3.4.1
+  image_picker: ^1.1.2
+
+  # Pagos / Checkout Pro (abre la preferencia de Mercado Pago)
+  url_launcher: ^6.3.1
+
+  # Notificaciones locales (complemento de FCM en foreground)
+  flutter_local_notifications: ^18.0.1
+
+  # Utilidades
+  intl: ^0.20.1            # formato de moneda es_AR, fechas
+  collection: ^1.19.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+  # Generación de código (modelos de datos / DTOs).
+  # Nota: NO usamos riverpod_generator ni custom_lint/riverpod_lint — su
+  # analyzer_plugin transitivo (0.12.0) no compila contra el analyzer 7.x.
+  # Los providers se escriben a mano. json_serializable/freezed quedan
+  # disponibles para DTOs si hicieran falta más adelante.
+  build_runner: ^2.4.13
+  json_serializable: ^6.9.0
+  freezed: ^2.5.7
+
+  # Testing
+  mocktail: ^1.0.4
+
+flutter:
+  uses-material-design: true
+  # Los assets (logo, ilustraciones) se declaran en la Fase 3.

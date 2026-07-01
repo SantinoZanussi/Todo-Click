@@ -1,0 +1,42 @@
+# ─── Monorepo TodoClick — .gitignore raíz ───
+# Cada subproyecto tiene además su propio .gitignore (app/, backend/).
+
+# Sistema
+.DS_Store
+*.log
+*.swp
+.history/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# Node (backend)
+**/node_modules/
+**/.env
+**/.env.*
+!**/.env.example
+backend/secrets/
+backend/coverage/
+
+# Flutter / Dart (app)
+app/.dart_tool/
+app/.flutter-plugins-dependencies
+app/build/
+app/coverage/
+**/.pub-cache/
+
+# Firebase
+.firebase/
+firebase-debug.log
+firestore-debug.log
+**/secrets/
+*serviceAccount*.json
+
+# Credenciales / claves
+*.pem
+*.p12
+*.keystore
+google-services.json
+GoogleService-Info.plist

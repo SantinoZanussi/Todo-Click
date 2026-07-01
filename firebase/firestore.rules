@@ -1,0 +1,127 @@
+rules_version = '2';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Reglas de seguridad de Firestore — TodoClick
+//
+// Principios:
+//  • Lectura pública SOLO de catálogo (productos/categorías/marcas/promos).
+//  • Cada usuario accede únicamente a SUS datos (carrito, favoritos, pedidos,
+//    notificaciones, perfil).
+//  • Toda escritura sensible (precios, stock, estados de pedido, cupones)
+//    pasa por el backend con Firebase Admin SDK, que IGNORA estas reglas.
+//    Por eso muchas colecciones tienen `write: false` para clientes.
+//  • El rol admin se verifica contra el custom claim del token, no contra
+//    un campo de Firestore (que sería falsificable).
+// ─────────────────────────────────────────────────────────────────────────────
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ----- Helpers -----
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && request.auth.token.role == 'admin';
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    // ----- usuarios -----
+    // El usuario lee/edita su propio perfil. El campo `role` NO puede ser
+    // escrito desde el cliente (solo el backend lo setea como custom claim).
+    match /usuarios/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      // El usuario crea SU propio doc; si incluye `role`, debe ser 'client'
+      // (no puede auto-asignarse admin). Paréntesis explícitos: el `||` interno
+      // no debe permitir crear docs ajenos.
+      allow create: if isOwner(userId)
+        && (!('role' in request.resource.data)
+            || request.resource.data.role == 'client');
+      // El dueño puede editar su perfil pero NO cambiar su rol; el admin sí.
+      allow update: if isAdmin()
+        || (isOwner(userId)
+            && request.resource.data.role == resource.data.role);
+      allow delete: if isAdmin();
+    }
+
+    // ----- productos -----  (catálogo público de solo lectura)
+    match /productos/{productId} {
+      allow read: if true;
+      allow write: if isAdmin(); // en la práctica lo hace el backend (Admin SDK)
+    }
+
+    // ----- categorias -----
+    match /categorias/{categoryId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // ----- marcas -----
+    match /marcas/{brandId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // ----- promociones -----  (banners/campañas públicas)
+    match /promociones/{promoId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // ----- cupones -----  (NUNCA se listan al público; se validan en backend)
+    match /cupones/{couponId} {
+      allow read: if isAdmin();
+      allow write: if isAdmin();
+    }
+
+    // ----- carritos -----  (un doc por usuario, sincronizado desde la app)
+    match /carritos/{userId} {
+      allow read, write: if isOwner(userId);
+      // Sub-ítems si se modela como subcolección (opcional):
+      match /items/{itemId} {
+        allow read, write: if isOwner(userId);
+      }
+    }
+
+    // ----- favoritos -----  (un doc por usuario)
+    match /favoritos/{userId} {
+      allow read, write: if isOwner(userId);
+    }
+
+    // ----- pedidos -----
+    // El cliente puede LEER sus pedidos; la creación y los cambios de estado
+    // los hace el backend (Admin SDK) para garantizar integridad de precios.
+    match /pedidos/{orderId} {
+      allow read: if isAdmin()
+        || (isSignedIn() && resource.data.userId == request.auth.uid);
+      allow create, update, delete: if isAdmin();
+    }
+
+    // ----- notificaciones -----  (una por usuario destinatario)
+    match /notificaciones/{notificationId} {
+      allow read: if isAdmin()
+        || (isSignedIn() && resource.data.userId == request.auth.uid);
+      // El cliente solo puede marcarla como leída (no crear/borrar).
+      allow update: if isSignedIn()
+        && resource.data.userId == request.auth.uid
+        && request.resource.data.diff(resource.data).affectedKeys()
+             .hasOnly(['read', 'readAt']);
+      allow create, delete: if isAdmin();
+    }
+
+    // ----- configuracion -----  (parámetros públicos: cuotas, banners, etc.)
+    match /configuracion/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Denegación por defecto para cualquier colección no contemplada.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

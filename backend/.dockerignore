@@ -1,0 +1,13 @@
+# Nunca copiar dentro de la imagen:
+node_modules
+npm-debug.log
+.env
+.env.*
+!.env.example
+secrets/            # las credenciales van por variables de entorno, no en la imagen
+coverage/
+test/
+.git
+.gitignore
+Dockerfile
+.dockerignore

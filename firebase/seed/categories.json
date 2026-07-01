@@ -1,0 +1,343 @@
+{
+  "_comment": "Seed inicial de categorías de TodoClick (estilo Shein/Temu). Se importa a la colección 'categorias' mediante el script de seed (Fase 2). Cada categoría tiene subcategorías embebidas. El admin puede crear/editar más dinámicamente desde el panel (Fase 7).",
+  "categories": [
+    {
+      "id": "moda-mujer",
+      "name": "Moda Mujer",
+      "slug": "moda-mujer",
+      "iconName": "checkroom",
+      "order": 1,
+      "isActive": true,
+      "isFeatured": true,
+      "subcategories": [
+        { "id": "vestidos", "name": "Vestidos", "slug": "vestidos" },
+        { "id": "remeras-tops", "name": "Remeras y Tops", "slug": "remeras-tops" },
+        { "id": "blusas-camisas", "name": "Blusas y Camisas", "slug": "blusas-camisas" },
+        { "id": "pantalones-jeans", "name": "Pantalones y Jeans", "slug": "pantalones-jeans" },
+        { "id": "polleras", "name": "Polleras", "slug": "polleras" },
+        { "id": "buzos-sweaters", "name": "Buzos y Sweaters", "slug": "buzos-sweaters" },
+        { "id": "camperas-abrigos", "name": "Camperas y Abrigos", "slug": "camperas-abrigos" },
+        { "id": "ropa-interior", "name": "Ropa Interior y Lencería", "slug": "ropa-interior-mujer" },
+        { "id": "ropa-deportiva-mujer", "name": "Ropa Deportiva", "slug": "ropa-deportiva-mujer" },
+        { "id": "trajes-de-bano", "name": "Trajes de Baño", "slug": "trajes-de-bano" }
+      ]
+    },
+    {
+      "id": "moda-hombre",
+      "name": "Moda Hombre",
+      "slug": "moda-hombre",
+      "iconName": "checkroom",
+      "order": 2,
+      "isActive": true,
+      "isFeatured": true,
+      "subcategories": [
+        { "id": "remeras-hombre", "name": "Remeras y Musculosas", "slug": "remeras-hombre" },
+        { "id": "camisas-hombre", "name": "Camisas", "slug": "camisas-hombre" },
+        { "id": "pantalones-hombre", "name": "Pantalones y Jeans", "slug": "pantalones-hombre" },
+        { "id": "bermudas-shorts", "name": "Bermudas y Shorts", "slug": "bermudas-shorts" },
+        { "id": "buzos-hombre", "name": "Buzos y Camperas", "slug": "buzos-hombre" },
+        { "id": "ropa-interior-hombre", "name": "Ropa Interior", "slug": "ropa-interior-hombre" },
+        { "id": "ropa-deportiva-hombre", "name": "Ropa Deportiva", "slug": "ropa-deportiva-hombre" },
+        { "id": "trajes-sacos", "name": "Trajes y Sacos", "slug": "trajes-sacos" }
+      ]
+    },
+    {
+      "id": "moda-infantil",
+      "name": "Moda Infantil",
+      "slug": "moda-infantil",
+      "iconName": "child_care",
+      "order": 3,
+      "isActive": true,
+      "isFeatured": false,
+      "subcategories": [
+        { "id": "ropa-nena", "name": "Ropa de Nena", "slug": "ropa-nena" },
+        { "id": "ropa-nene", "name": "Ropa de Nene", "slug": "ropa-nene" },
+        { "id": "ropa-bebe", "name": "Ropa de Bebé", "slug": "ropa-bebe" },
+        { "id": "calzado-infantil", "name": "Calzado Infantil", "slug": "calzado-infantil" },
+        { "id": "accesorios-infantil", "name": "Accesorios", "slug": "accesorios-infantil" }
+      ]
+    },
+    {
+      "id": "calzado",
+      "name": "Calzado",
+      "slug": "calzado",
+      "iconName": "ice_skating",
+      "order": 4,
+      "isActive": true,
+      "isFeatured": true,
+      "subcategories": [
+        { "id": "zapatillas", "name": "Zapatillas", "slug": "zapatillas" },
+        { "id": "sandalias", "name": "Sandalias y Ojotas", "slug": "sandalias" },
+        { "id": "botas-botinetas", "name": "Botas y Botinetas", "slug": "botas-botinetas" },
+        { "id": "zapatos", "name": "Zapatos", "slug": "zapatos" },
+        { "id": "calzado-deportivo", "name": "Calzado Deportivo", "slug": "calzado-deportivo" },
+        { "id": "pantuflas", "name": "Pantuflas", "slug": "pantuflas" }
+      ]
+    },
+    {
+      "id": "belleza",
+      "name": "Belleza y Cuidado Personal",
+      "slug": "belleza",
+      "iconName": "spa",
+      "order": 5,
+      "isActive": true,
+      "isFeatured": true,
+      "subcategories": [
+        { "id": "maquillaje", "name": "Maquillaje", "slug": "maquillaje" },
+        { "id": "cuidado-piel", "name": "Cuidado de la Piel", "slug": "cuidado-piel" },
+        { "id": "cuidado-cabello", "name": "Cuidado del Cabello", "slug": "cuidado-cabello" },
+        { "id": "perfumes", "name": "Perfumes y Fragancias", "slug": "perfumes" },
+        { "id": "unas", "name": "Uñas", "slug": "unas" },
+        { "id": "higiene-personal", "name": "Higiene Personal", "slug": "higiene-personal" },
+        { "id": "afeitado", "name": "Afeitado y Barba", "slug": "afeitado" }
+      ]
+    },
+    {
+      "id": "hogar-cocina",
+      "name": "Hogar y Cocina",
+      "slug": "hogar-cocina",
+      "iconName": "home",
+      "order": 6,
+      "isActive": true,
+      "isFeatured": true,
+      "subcategories": [
+        { "id": "utensilios-cocina", "name": "Utensilios de Cocina", "slug": "utensilios-cocina" },
+        { "id": "vajilla", "name": "Vajilla y Cubiertos", "slug": "vajilla" },
+        { "id": "organizacion", "name": "Organización y Orden", "slug": "organizacion" },
+        { "id": "ropa-de-cama", "name": "Ropa de Cama", "slug": "ropa-de-cama" },
+        { "id": "banio", "name": "Baño", "slug": "banio" },
+        { "id": "decoracion-hogar", "name": "Decoración", "slug": "decoracion-hogar" },
+        { "id": "iluminacion", "name": "Iluminación", "slug": "iluminacion" },
+        { "id": "limpieza", "name": "Limpieza", "slug": "limpieza" }
+      ]
+    },
+    {
+      "id": "electronica",
+      "name": "Electrónica y Tecnología",
+      "slug": "electronica",
+      "iconName": "devices",
+      "order": 7,
+      "isActive": true,
+      "isFeatured": true,
+      "subcategories": [
+        { "id": "audio", "name": "Audio y Auriculares", "slug": "audio" },
+        { "id": "computacion", "name": "Computación", "slug": "computacion" },
+        { "id": "gaming", "name": "Gaming", "slug": "gaming" },
+        { "id": "smartwatch", "name": "Smartwatches y Wearables", "slug": "smartwatch" },
+        { "id": "camaras", "name": "Cámaras y Fotografía", "slug": "camaras" },
+        { "id": "tv-video", "name": "TV y Video", "slug": "tv-video" },
+        { "id": "almacenamiento", "name": "Almacenamiento", "slug": "almacenamiento" }
+      ]
+    },
+    {
+      "id": "celulares",
+      "name": "Celulares y Accesorios",
+      "slug": "celulares",
+      "iconName": "smartphone",
+      "order": 8,
+      "isActive": true,
+      "isFeatured": false,
+      "subcategories": [
+        { "id": "fundas", "name": "Fundas y Protectores", "slug": "fundas" },
+        { "id": "cargadores", "name": "Cargadores y Cables", "slug": "cargadores" },
+        { "id": "soportes", "name": "Soportes y Holders", "slug": "soportes" },
+        { "id": "powerbanks", "name": "Power Banks", "slug": "powerbanks" },
+        { "id": "smartphones", "name": "Smartphones", "slug": "smartphones" }
+      ]
+    },
+    {
+      "id": "deportes",
+      "name": "Deportes y Aire Libre",
+      "slug": "deportes",
+      "iconName": "sports_soccer",
+      "order": 9,
+      "isActive": true,
+      "isFeatured": false,
+      "subcategories": [
+        { "id": "fitness", "name": "Fitness y Musculación", "slug": "fitness" },
+        { "id": "camping", "name": "Camping y Outdoor", "slug": "camping" },
+        { "id": "ciclismo", "name": "Ciclismo", "slug": "ciclismo" },
+        { "id": "indumentaria-deportiva", "name": "Indumentaria Deportiva", "slug": "indumentaria-deportiva" },
+        { "id": "deportes-equipo", "name": "Deportes de Equipo", "slug": "deportes-equipo" },
+        { "id": "natacion", "name": "Natación", "slug": "natacion" }
+      ]
+    },
+    {
+      "id": "juguetes",
+      "name": "Juguetes y Juegos",
+      "slug": "juguetes",
+      "iconName": "toys",
+      "order": 10,
+      "isActive": true,
+      "isFeatured": false,
+      "subcategories": [
+        { "id": "juegos-mesa", "name": "Juegos de Mesa", "slug": "juegos-mesa" },
+        { "id": "munecos", "name": "Muñecos y Figuras", "slug": "munecos" },
+        { "id": "didacticos", "name": "Didácticos y Educativos", "slug": "didacticos" },
+        { "id": "aire-libre-juguetes", "name": "Juguetes de Aire Libre", "slug": "aire-libre-juguetes" },
+        { "id": "peluches", "name": "Peluches", "slug": "peluches" },
+        { "id": "vehiculos-juguete", "name": "Autos y Vehículos", "slug": "vehiculos-juguete" }
+      ]
+    },
+    {
+      "id": "bebes",
+      "name": "Bebés y Maternidad",
+      "slug": "bebes",
+      "iconName": "stroller",
+      "order": 11,
+      "isActive": true,
+      "isFeatured": false,
+      "subcategories": [
+        { "id": "alimentacion-bebe", "name": "Alimentación", "slug": "alimentacion-bebe" },
+        { "id": "higiene-bebe", "name": "Higiene y Pañales", "slug": "higiene-bebe" },
+        { "id": "cochecitos", "name": "Cochecitos y Sillas", "slug": "cochecitos" },
+        { "id": "cuna-habitacion", "name": "Cuna y Habitación", "slug": "cuna-habitacion" },
+        { "id": "maternidad", "name": "Maternidad", "slug": "maternidad" }
+      ]
+    },
+    {
+      "id": "mascotas",
+      "name": "Mascotas",
+      "slug": "mascotas",
+      "iconName": "pets",
+      "order": 12,
+      "isActive": true,
+      "isFeatured": false,
+      "subcategories": [
+        { "id": "perros", "name": "Perros", "slug": "perros" },
+        { "id": "gatos", "name": "Gatos", "slug": "gatos" },
+        { "id": "alimento-mascotas", "name": "Alimentos", "slug": "alimento-mascotas" },
+        { "id": "juguetes-mascotas", "name": "Juguetes", "slug": "juguetes-mascotas" },
+        { "id": "accesorios-mascotas", "name": "Accesorios y Camas", "slug": "accesorios-mascotas" }
+      ]
+    },
+    {
+      "id": "joyeria-accesorios",
+      "name": "Joyería y Accesorios",
+      "slug": "joyeria-accesorios",
+      "iconName": "diamond",
+      "order": 13,
+      "isActive": true,
+      "isFeatured": false,
+      "subcategories": [
+        { "id": "collares", "name": "Collares", "slug": "collares" },
+        { "id": "aros", "name": "Aros y Pendientes", "slug": "aros" },
+        { "id": "anillos", "name": "Anillos", "slug": "anillos" },
+        { "id": "pulseras", "name": "Pulseras", "slug": "pulseras" },
+        { "id": "relojes", "name": "Relojes", "slug": "relojes" },
+        { "id": "lentes-sol", "name": "Lentes de Sol", "slug": "lentes-sol" },
+        { "id": "carteras-mochilas", "name": "Carteras y Mochilas", "slug": "carteras-mochilas" },
+        { "id": "gorros-sombreros", "name": "Gorros y Sombreros", "slug": "gorros-sombreros" }
+      ]
+    },
+    {
+      "id": "herramientas",
+      "name": "Herramientas y Ferretería",
+      "slug": "herramientas",
+      "iconName": "construction",
+      "order": 14,
+      "isActive": true,
+      "isFeatured": false,
+      "subcategories": [
+        { "id": "herramientas-manuales", "name": "Herramientas Manuales", "slug": "herramientas-manuales" },
+        { "id": "herramientas-electricas", "name": "Herramientas Eléctricas", "slug": "herramientas-electricas" },
+        { "id": "tornilleria", "name": "Tornillería y Fijaciones", "slug": "tornilleria" },
+        { "id": "pinturas", "name": "Pinturas y Accesorios", "slug": "pinturas" },
+        { "id": "electricidad", "name": "Electricidad", "slug": "electricidad" }
+      ]
+    },
+    {
+      "id": "automotriz",
+      "name": "Automotriz",
+      "slug": "automotriz",
+      "iconName": "directions_car",
+      "order": 15,
+      "isActive": true,
+      "isFeatured": false,
+      "subcategories": [
+        { "id": "accesorios-auto", "name": "Accesorios para Auto", "slug": "accesorios-auto" },
+        { "id": "audio-car", "name": "Audio y Multimedia", "slug": "audio-car" },
+        { "id": "cuidado-vehiculo", "name": "Cuidado del Vehículo", "slug": "cuidado-vehiculo" },
+        { "id": "moto", "name": "Motos", "slug": "moto" },
+        { "id": "herramientas-auto", "name": "Herramientas y Repuestos", "slug": "herramientas-auto" }
+      ]
+    },
+    {
+      "id": "libreria-oficina",
+      "name": "Librería y Oficina",
+      "slug": "libreria-oficina",
+      "iconName": "edit",
+      "order": 16,
+      "isActive": true,
+      "isFeatured": false,
+      "subcategories": [
+        { "id": "utiles-escolares", "name": "Útiles Escolares", "slug": "utiles-escolares" },
+        { "id": "papeleria", "name": "Papelería", "slug": "papeleria" },
+        { "id": "mobiliario-oficina", "name": "Mobiliario de Oficina", "slug": "mobiliario-oficina" },
+        { "id": "arte", "name": "Arte y Manualidades", "slug": "arte" }
+      ]
+    },
+    {
+      "id": "salud-bienestar",
+      "name": "Salud y Bienestar",
+      "slug": "salud-bienestar",
+      "iconName": "health_and_safety",
+      "order": 17,
+      "isActive": true,
+      "isFeatured": false,
+      "subcategories": [
+        { "id": "suplementos", "name": "Suplementos y Vitaminas", "slug": "suplementos" },
+        { "id": "cuidado-medico", "name": "Cuidado Médico", "slug": "cuidado-medico" },
+        { "id": "masajes", "name": "Masajes y Relajación", "slug": "masajes" },
+        { "id": "movilidad", "name": "Movilidad y Ortopedia", "slug": "movilidad" }
+      ]
+    },
+    {
+      "id": "jardin",
+      "name": "Jardín y Exterior",
+      "slug": "jardin",
+      "iconName": "yard",
+      "order": 18,
+      "isActive": true,
+      "isFeatured": false,
+      "subcategories": [
+        { "id": "plantas-macetas", "name": "Plantas y Macetas", "slug": "plantas-macetas" },
+        { "id": "herramientas-jardin", "name": "Herramientas de Jardín", "slug": "herramientas-jardin" },
+        { "id": "muebles-exterior", "name": "Muebles de Exterior", "slug": "muebles-exterior" },
+        { "id": "parrillas", "name": "Parrillas y Asado", "slug": "parrillas" },
+        { "id": "piletas", "name": "Piletas y Accesorios", "slug": "piletas" }
+      ]
+    },
+    {
+      "id": "electrodomesticos",
+      "name": "Electrodomésticos",
+      "slug": "electrodomesticos",
+      "iconName": "kitchen",
+      "order": 19,
+      "isActive": true,
+      "isFeatured": false,
+      "subcategories": [
+        { "id": "cocina-electrodomesticos", "name": "Pequeños de Cocina", "slug": "cocina-electrodomesticos" },
+        { "id": "climatizacion", "name": "Climatización", "slug": "climatizacion" },
+        { "id": "cuidado-ropa", "name": "Cuidado de la Ropa", "slug": "cuidado-ropa" },
+        { "id": "limpieza-electro", "name": "Limpieza", "slug": "limpieza-electro" }
+      ]
+    },
+    {
+      "id": "bazar-deco",
+      "name": "Bazar y Decoración",
+      "slug": "bazar-deco",
+      "iconName": "celebration",
+      "order": 20,
+      "isActive": true,
+      "isFeatured": false,
+      "subcategories": [
+        { "id": "fiestas", "name": "Fiestas y Eventos", "slug": "fiestas" },
+        { "id": "velas-aromas", "name": "Velas y Aromas", "slug": "velas-aromas" },
+        { "id": "cuadros", "name": "Cuadros y Arte Mural", "slug": "cuadros" },
+        { "id": "manualidades-deco", "name": "Manualidades", "slug": "manualidades-deco" },
+        { "id": "regalos", "name": "Regalos", "slug": "regalos" }
+      ]
+    }
+  ]
+}
