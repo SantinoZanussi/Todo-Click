@@ -54,7 +54,8 @@ class AdminProductsPage extends ConsumerWidget {
                   final p = products[i];
                   return ListTile(
                     leading: CircleAvatar(
-                      backgroundColor: AppColors.background,
+                      backgroundColor:
+                          Theme.of(context).colorScheme.surfaceContainerHighest,
                       backgroundImage: p.mainImage != null
                           ? NetworkImage(p.mainImage!)
                           : null,

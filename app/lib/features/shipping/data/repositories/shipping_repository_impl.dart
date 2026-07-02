@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 
 import '../../../../core/enums/enums.dart';
 import '../../../../core/error/failures.dart';
+import '../../domain/entities/shipping_agency.dart';
 import '../../domain/entities/shipping_option.dart';
 import '../../domain/entities/tracking_event.dart';
 import '../../domain/repositories/shipping_repository.dart';
@@ -49,6 +50,27 @@ class ShippingRepositoryImpl implements ShippingRepository {
           .map((m) => TrackingEvent.fromJson(Map<String, dynamic>.from(m)))
           .toList();
       return Right(events);
+    } on DioException catch (e) {
+      return Left(ServerFailure(_message(e)));
+    } catch (e) {
+      return Left(UnexpectedFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<ShippingAgency>>> agencies({
+    required String province,
+  }) async {
+    try {
+      final res = await _dio.get<Map<String, dynamic>>(
+        '/api/shipping/agencies',
+        queryParameters: {'province': province},
+      );
+      final list = (res.data?['agencies'] as List? ?? const [])
+          .whereType<Map>()
+          .map((m) => ShippingAgency.fromJson(Map<String, dynamic>.from(m)))
+          .toList();
+      return Right(list);
     } on DioException catch (e) {
       return Left(ServerFailure(_message(e)));
     } catch (e) {

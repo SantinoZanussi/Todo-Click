@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/responsive/breakpoints.dart';
+import '../../../../core/responsive/content_container.dart';
 import '../../../../core/router/app_routes.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/formatters.dart';
 import '../../../../shared/widgets/widgets.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
@@ -72,10 +73,12 @@ class NotificationsPage extends ConsumerWidget {
                 title: 'Sin notificaciones',
                 message: 'Acá vas a ver novedades de tus pedidos y promos.',
               )
-            : ListView.separated(
-                itemCount: list.length,
-                separatorBuilder: (_, _) => const Divider(height: 1),
-                itemBuilder: (_, i) => _tile(context, ref, actions, list[i]),
+            : _NotificationsList(
+                child: ListView.separated(
+                  itemCount: list.length,
+                  separatorBuilder: (_, _) => const Divider(height: 1),
+                  itemBuilder: (_, i) => _tile(context, ref, actions, list[i]),
+                ),
               ),
       ),
     );
@@ -87,14 +90,15 @@ class NotificationsPage extends ConsumerWidget {
     NotificationsActions actions,
     AppNotification n,
   ) {
+    final scheme = Theme.of(context).colorScheme;
     return ListTile(
       leading: CircleAvatar(
         backgroundColor: n.read
-            ? AppColors.background
-            : AppColors.violet.withValues(alpha: 0.12),
+            ? scheme.surfaceContainerHighest
+            : scheme.primary.withValues(alpha: 0.14),
         child: Icon(
           _iconFor(n.type),
-          color: n.read ? AppColors.muted : AppColors.violet,
+          color: n.read ? scheme.onSurfaceVariant : scheme.primary,
         ),
       ),
       title: Text(
@@ -106,7 +110,7 @@ class NotificationsPage extends ConsumerWidget {
       subtitle: Text(n.body),
       trailing: Text(
         Formatters.date(n.createdAt),
-        style: const TextStyle(fontSize: 11, color: AppColors.muted),
+        style: TextStyle(fontSize: 11, color: scheme.onSurfaceVariant),
       ),
       onTap: () {
         if (!n.read) actions.markAsRead(n.id);
@@ -114,5 +118,19 @@ class NotificationsPage extends ConsumerWidget {
         if (orderId != null) context.push(AppRoutes.orderDetailOf(orderId));
       },
     );
+  }
+}
+
+/// Acota el ancho de la lista de notificaciones en escritorio (columna
+/// legible en vez de filas de borde a borde).
+class _NotificationsList extends StatelessWidget {
+  const _NotificationsList({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    if (!context.isWide) return child;
+    return ContentContainer(maxWidth: 760, child: child);
   }
 }

@@ -122,7 +122,10 @@ class AdminCategoriesPage extends ConsumerWidget {
           itemBuilder: (_, i) {
             final c = list[i];
             return ListTile(
-              leading: Icon(categoryIcon(c.iconName), color: AppColors.violet),
+              leading: Icon(
+                categoryIcon(c.iconName),
+                color: Theme.of(context).colorScheme.primary,
+              ),
               title: Text(c.name),
               subtitle: Text('${c.subcategories.length} subcategorías'),
               trailing: c.isFeatured

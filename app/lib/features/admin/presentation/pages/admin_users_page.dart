@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../core/theme/app_colors.dart';
 import '../../../../shared/widgets/widgets.dart';
 import '../../domain/entities/admin_views.dart';
 import '../controllers/admin_providers.dart';
@@ -70,11 +69,13 @@ class AdminUsersPage extends ConsumerWidget {
             return ListTile(
               leading: CircleAvatar(
                 backgroundColor: u.isAdmin
-                    ? AppColors.violet.withValues(alpha: 0.15)
-                    : AppColors.background,
+                    ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.15)
+                    : Theme.of(context).colorScheme.surfaceContainerHighest,
                 child: Icon(
                   u.isAdmin ? Icons.shield : Icons.person_outline,
-                  color: u.isAdmin ? AppColors.violet : AppColors.slate,
+                  color: u.isAdmin
+                      ? Theme.of(context).colorScheme.primary
+                      : Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
               ),
               title: Text(u.displayName ?? u.email),

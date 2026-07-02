@@ -56,7 +56,9 @@ class AdminPromotionsPage extends ConsumerWidget {
                   return ListTile(
                     leading: Icon(
                       Icons.campaign,
-                      color: p.isActive ? AppColors.violet : AppColors.muted,
+                      color: p.isActive
+                          ? Theme.of(context).colorScheme.primary
+                          : Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                     title: Text(p.title),
                     subtitle: Text(p.subtitle ?? p.type.label),

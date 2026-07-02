@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/router/app_routes.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/formatters.dart';
 import '../../../../shared/widgets/widgets.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
@@ -53,9 +52,9 @@ class OrdersPage extends ConsumerWidget {
                 itemBuilder: (_, i) {
                   final o = orders[i];
                   return ListTile(
-                    leading: const Icon(
+                    leading: Icon(
                       Icons.receipt_long,
-                      color: AppColors.violet,
+                      color: Theme.of(context).colorScheme.primary,
                     ),
                     title: Text(o.orderNumber),
                     subtitle: Text(

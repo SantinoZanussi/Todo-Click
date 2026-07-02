@@ -52,6 +52,9 @@ dependencies:
   # secure_storage (además rompía la compilación a WebAssembly).
   shared_preferences: ^2.3.3
 
+  # Tipografía de marca (rediseño): familia Archivo servida por Google Fonts.
+  google_fonts: ^6.2.1
+
   # Imágenes
   cached_network_image: ^3.4.1
   image_picker: ^1.1.2

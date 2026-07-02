@@ -12,6 +12,7 @@
     "dev": "node --watch src/index.js",
     "seed": "node scripts/seed.js",
     "set-admin": "node scripts/setAdminClaim.js",
+    "diag:correo": "node scripts/correoDiag.js",
     "lint": "eslint .",
     "test": "node --test"
   },

@@ -96,6 +96,11 @@ class AdminApi {
     data: {'trackingCode': trackingCode},
   );
 
+  /// Da de alta (despacha) el envío del pedido en Correo Argentino (MiCorreo).
+  /// `agency` es el código de sucursal (opcional, para envíos a sucursal).
+  Future<void> shipOrder(String id, {String? agency}) =>
+      _dio.post('/api/admin/orders/$id/ship', data: {'agency': ?agency});
+
   // ── Usuarios ──
   Future<void> setUserRole(String uid, String role) =>
       _dio.patch('/api/admin/users/$uid/role', data: {'role': role});

@@ -14,17 +14,17 @@ class AppBadge extends StatelessWidget {
     super.key,
   });
 
-  /// Badge de oferta (gradiente coral→amarillo).
+  /// Badge de oferta (terracota sobria).
   factory AppBadge.sale(String label) =>
-      AppBadge(label: label, gradient: AppColors.saleGradient);
+      AppBadge(label: label, color: AppColors.coral);
 
-  /// Badge "Destacado".
+  /// Badge "Destacado" (slate de marca).
   factory AppBadge.featured() =>
-      const AppBadge(label: 'DESTACADO', color: AppColors.yellow);
+      const AppBadge(label: 'DESTACADO', color: AppColors.charcoal);
 
   /// Badge "Nuevo".
   factory AppBadge.isNew() =>
-      const AppBadge(label: 'NUEVO', color: AppColors.teal);
+      const AppBadge(label: 'NUEVO', color: AppColors.moss);
 
   /// Badge "Sin stock".
   factory AppBadge.outOfStock() =>
@@ -43,7 +43,7 @@ class AppBadge extends StatelessWidget {
         vertical: 3,
       ),
       decoration: BoxDecoration(
-        color: gradient == null ? (color ?? AppColors.violet) : null,
+        color: gradient == null ? (color ?? AppColors.charcoal) : null,
         gradient: gradient,
         borderRadius: BorderRadius.circular(AppRadius.sm),
       ),
@@ -55,12 +55,12 @@ class AppBadge extends StatelessWidget {
             const SizedBox(width: 4),
           ],
           Text(
-            label,
+            label.toUpperCase(),
             style: const TextStyle(
               color: AppColors.white,
               fontSize: 10,
               fontWeight: FontWeight.w700,
-              letterSpacing: 0.3,
+              letterSpacing: 0.8,
             ),
           ),
         ],

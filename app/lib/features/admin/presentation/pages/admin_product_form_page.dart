@@ -408,9 +408,11 @@ class _AdminProductFormPageState extends ConsumerState<AdminProductFormPage> {
                   width: 96,
                   height: 96,
                   decoration: BoxDecoration(
-                    color: AppColors.background,
+                    color: Theme.of(context).colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(AppRadius.sm),
-                    border: Border.all(color: AppColors.border),
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.outline,
+                    ),
                   ),
                   child: _uploading
                       ? const Center(child: CircularProgressIndicator())

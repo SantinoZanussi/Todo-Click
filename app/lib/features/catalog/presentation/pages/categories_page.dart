@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/responsive/breakpoints.dart';
+import '../../../../core/responsive/content_container.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../shared/widgets/widgets.dart';
 import '../../domain/entities/category.dart';
 import '../../domain/entities/product_query.dart';
 import '../controllers/catalog_providers.dart';
-import '../widgets/category_card.dart';
+import '../widgets/category_tile.dart';
 import '../widgets/product_list_args.dart';
 
 /// Pantalla de Categorías: grilla de categorías; al tocar una se abre una hoja
@@ -38,7 +40,12 @@ class CategoriesPage extends ConsumerWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(category.name, style: Theme.of(context).textTheme.titleLarge),
+            Text(
+              category.name.toUpperCase(),
+              style: Theme.of(
+                context,
+              ).textTheme.titleLarge?.copyWith(letterSpacing: 0.8),
+            ),
             const SizedBox(height: AppSpacing.sm),
             ListTile(
               contentPadding: EdgeInsets.zero,
@@ -86,44 +93,82 @@ class CategoriesPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final categories = ref.watch(categoriesProvider);
+    final wide = context.isWide;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Categorías'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.search),
-            onPressed: () => context.push(AppRoutes.search),
-          ),
-        ],
+    final content = categories.when(
+      loading: () => const LoadingView(),
+      error: (_, _) => ErrorStateView(
+        message: 'No se pudieron cargar las categorías.',
+        onRetry: () => ref.invalidate(categoriesProvider),
       ),
-      body: categories.when(
-        loading: () => const LoadingView(),
-        error: (_, _) => ErrorStateView(
-          message: 'No se pudieron cargar las categorías.',
-          onRetry: () => ref.invalidate(categoriesProvider),
-        ),
-        data: (list) => list.isEmpty
-            ? const EmptyStateView(
-                icon: Icons.grid_view,
-                title: 'Sin categorías',
-                message: 'Todavía no hay categorías cargadas.',
-              )
-            : GridView.builder(
-                padding: const EdgeInsets.all(AppSpacing.lg),
-                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                  maxCrossAxisExtent: 180,
+      data: (list) {
+        if (list.isEmpty) {
+          return const EmptyStateView(
+            icon: Icons.grid_view,
+            title: 'Sin categorías',
+            message: 'Todavía no hay categorías cargadas.',
+          );
+        }
+        final feature = list.first;
+        final rest = list.skip(1).toList();
+        final columns = context.responsive(mobile: 2, tablet: 4, desktop: 5);
+        return SingleChildScrollView(
+          padding: EdgeInsets.all(wide ? 0 : AppSpacing.lg),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CategoryFeature(
+                category: feature,
+                kicker: 'Explorá',
+                onTap: () => _openCategory(context, feature),
+              ),
+              const SizedBox(height: AppSpacing.md),
+              GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                padding: EdgeInsets.zero,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: columns,
                   crossAxisSpacing: AppSpacing.md,
                   mainAxisSpacing: AppSpacing.md,
-                  childAspectRatio: 0.95,
+                  childAspectRatio: 0.8,
                 ),
-                itemCount: list.length,
-                itemBuilder: (_, i) => CategoryCard(
-                  category: list[i],
-                  onTap: () => _openCategory(context, list[i]),
+                itemCount: rest.length,
+                itemBuilder: (_, i) => CategoryTile(
+                  category: rest[i],
+                  tone: categoryToneAt(i + 1),
+                  onTap: () => _openCategory(context, rest[i]),
                 ),
               ),
-      ),
+              const SizedBox(height: AppSpacing.xl),
+            ],
+          ),
+        );
+      },
+    );
+
+    return Scaffold(
+      appBar: wide
+          ? null
+          : AppBar(
+              title: const Text('Categorías'),
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.search),
+                  onPressed: () => context.push(AppRoutes.search),
+                ),
+              ],
+            ),
+      body: wide
+          ? Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const PageHeading(title: 'Categorías'),
+                Expanded(child: ContentContainer(child: content)),
+                const SizedBox(height: AppSpacing.xl),
+              ],
+            )
+          : content,
     );
   }
 }

@@ -13,6 +13,7 @@ import { crudRepository } from '../repositories/crud.repository.js';
 import { orderRepository } from '../repositories/order.repository.js';
 import { userRepository } from '../repositories/user.repository.js';
 import { notificationService } from '../services/notification.service.js';
+import { shippingService } from '../services/shipping.service.js';
 import { statsService } from '../services/stats.service.js';
 import { buildSearchKeywords } from '../shared/utils/searchKeywords.js';
 import { ApiError } from '../shared/utils/ApiError.js';
@@ -156,6 +157,27 @@ export const adminController = {
       'shipping.carrier': carrier ?? 'Correo Argentino',
     });
     res.json({ id: req.params.id, trackingCode: trackingCode ?? null });
+  },
+
+  /**
+   * Da de alta (importa) el envío del pedido en MiCorreo. `body.agency` es
+   * opcional (código de sucursal para envíos a sucursal). La API no devuelve el
+   * número de tracking: el admin lo copia de MiCorreo y lo asigna con
+   * `setOrderTracking`. Deja registrado `shipping.importedAt`.
+   */
+  async shipOrder(req, res) {
+    const order = await orderRepository.getById(req.params.id);
+    if (!order) throw ApiError.notFound('Pedido no encontrado.');
+    if (order.shipping?.method === 'store_pickup') {
+      throw ApiError.badRequest('El retiro en tienda no se despacha por correo.');
+    }
+    const result = await shippingService.importOrder(order, {
+      agency: req.body?.agency,
+    });
+    await orderRepository.update(req.params.id, {
+      'shipping.importedAt': new Date(),
+    });
+    res.json({ id: req.params.id, imported: true, ...result });
   },
 
   // ── Usuarios ──

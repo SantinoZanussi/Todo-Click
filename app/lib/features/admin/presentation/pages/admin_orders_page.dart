@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/enums/enums.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/formatters.dart';
 import '../../../../shared/widgets/widgets.dart';
 import '../../domain/entities/admin_views.dart';
@@ -33,7 +32,9 @@ class _AdminOrdersPageState extends ConsumerState<AdminOrdersPage> {
                   s == order.status
                       ? Icons.radio_button_checked
                       : Icons.radio_button_off,
-                  color: s == order.status ? AppColors.violet : null,
+                  color: s == order.status
+                      ? Theme.of(context).colorScheme.primary
+                      : null,
                 ),
                 title: Text(s.label),
                 onTap: () => Navigator.pop(context, s),
@@ -68,6 +69,15 @@ class _AdminOrdersPageState extends ConsumerState<AdminOrdersPage> {
             },
           ),
           ListTile(
+            leading: const Icon(Icons.outbox_outlined),
+            title: const Text('Despachar en Correo Argentino'),
+            subtitle: const Text('Da de alta el envío en MiCorreo'),
+            onTap: () {
+              Navigator.pop(context);
+              _shipOrder(order);
+            },
+          ),
+          ListTile(
             leading: const Icon(Icons.local_shipping),
             title: const Text('Asignar código de seguimiento'),
             onTap: () {
@@ -78,6 +88,54 @@ class _AdminOrdersPageState extends ConsumerState<AdminOrdersPage> {
         ],
       ),
     );
+  }
+
+  Future<void> _shipOrder(AdminOrderSummary order) async {
+    final ctrl = TextEditingController();
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('Despachar en Correo Argentino'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Se dará de alta el envío en MiCorreo. Después copiá el número '
+              'que te da MiCorreo y asignalo como código de seguimiento.',
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: ctrl,
+              decoration: const InputDecoration(
+                labelText: 'Código de sucursal (opcional)',
+                helperText: 'Solo para envíos a sucursal',
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancelar'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Despachar'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+    final agency = ctrl.text.trim();
+    final ok = await runAdminAction(
+      context,
+      () => ref
+          .read(adminApiProvider)
+          .shipOrder(order.id, agency: agency.isEmpty ? null : agency),
+      success: 'Envío dado de alta en Correo Argentino',
+    );
+    if (ok) ref.invalidate(adminOrdersProvider(_filter));
   }
 
   Future<void> _setTracking(AdminOrderSummary order) async {

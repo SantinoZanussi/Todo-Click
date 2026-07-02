@@ -20,7 +20,13 @@ class StatCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
+    final scheme = Theme.of(context).colorScheme;
+    return Container(
+      decoration: BoxDecoration(
+        color: scheme.surface,
+        borderRadius: BorderRadius.circular(AppRadius.lg),
+        border: Border.all(color: scheme.outline),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.lg),
         child: Column(
@@ -29,7 +35,7 @@ class StatCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(AppSpacing.sm),
               decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.12),
+                color: color.withValues(alpha: 0.14),
                 borderRadius: BorderRadius.circular(AppRadius.sm),
               ),
               child: Icon(icon, color: color, size: 20),
@@ -37,56 +43,21 @@ class StatCard extends StatelessWidget {
             const SizedBox(height: AppSpacing.md),
             Text(
               value,
-              style: Theme.of(context).textTheme.titleLarge,
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                letterSpacing: -0.3,
+              ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
             Text(
-              label,
-              style: Theme.of(
-                context,
-              ).textTheme.bodySmall?.copyWith(color: AppColors.slate),
+              label.toUpperCase(),
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: scheme.onSurfaceVariant,
+                letterSpacing: 0.5,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-/// Tarjeta de acceso a una sección de gestión.
-class AdminSectionCard extends StatelessWidget {
-  const AdminSectionCard({
-    required this.label,
-    required this.icon,
-    required this.onTap,
-    super.key,
-  });
-
-  final String label;
-  final IconData icon;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.lg),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(icon, color: AppColors.violet, size: 28),
-              const SizedBox(height: AppSpacing.sm),
-              Text(
-                label,
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-            ],
-          ),
         ),
       ),
     );
@@ -97,7 +68,7 @@ class AdminSectionCard extends StatelessWidget {
 Future<bool> runAdminAction(
   BuildContext context,
   Future<void> Function() action, {
-  String success = 'Listo ✅',
+  String success = 'Listo',
 }) async {
   showDialog<void>(
     context: context,

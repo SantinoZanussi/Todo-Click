@@ -18,4 +18,11 @@ export const shippingController = {
   async track(req, res) {
     res.json(await shippingService.track(req.params.code));
   },
+
+  async agencies(req, res) {
+    const { province, provinceCode, services } = req.query;
+    res.json(
+      await shippingService.agencies({ province, provinceCode, services }),
+    );
+  },
 };

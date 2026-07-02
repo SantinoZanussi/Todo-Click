@@ -112,26 +112,35 @@ class _FilterSheetState extends ConsumerState<_FilterSheet> {
                 Expanded(child: _priceField(_maxCtrl, 'Máximo')),
               ],
             ),
-            const SizedBox(height: AppSpacing.sm),
+            const SizedBox(height: AppSpacing.lg),
 
             // Disponibilidad / oferta
-            SwitchListTile(
-              contentPadding: EdgeInsets.zero,
-              title: const Text('Solo con stock'),
-              value: _query.inStockOnly,
-              onChanged: (v) =>
-                  setState(() => _query = _query.copyWith(inStockOnly: v)),
+            Text(
+              'Disponibilidad',
+              style: Theme.of(context).textTheme.titleMedium,
             ),
-            SwitchListTile(
-              contentPadding: EdgeInsets.zero,
-              title: const Text('Solo en oferta'),
-              value: _query.onSaleOnly,
-              onChanged: (v) =>
-                  setState(() => _query = _query.copyWith(onSaleOnly: v)),
+            const SizedBox(height: AppSpacing.sm),
+            Wrap(
+              spacing: AppSpacing.sm,
+              runSpacing: AppSpacing.sm,
+              children: [
+                FilterChip(
+                  label: const Text('En stock'),
+                  selected: _query.inStockOnly,
+                  onSelected: (v) =>
+                      setState(() => _query = _query.copyWith(inStockOnly: v)),
+                ),
+                FilterChip(
+                  label: const Text('En oferta'),
+                  selected: _query.onSaleOnly,
+                  onSelected: (v) =>
+                      setState(() => _query = _query.copyWith(onSaleOnly: v)),
+                ),
+              ],
             ),
 
             // Marca
-            const SizedBox(height: AppSpacing.sm),
+            const SizedBox(height: AppSpacing.lg),
             brands.when(
               loading: () => const LinearProgressIndicator(),
               error: (_, _) => const SizedBox.shrink(),

@@ -32,10 +32,16 @@ class EmptyStateView extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(AppSpacing.xl),
               decoration: BoxDecoration(
-                color: AppColors.violet.withValues(alpha: 0.08),
+                color: Theme.of(context).colorScheme.surfaceContainerHighest,
                 shape: BoxShape.circle,
               ),
-              child: Icon(icon, size: 56, color: AppColors.violet),
+              child: Icon(
+                icon,
+                size: 56,
+                color: Theme.of(context).colorScheme.onSurface.withValues(
+                  alpha: 0.55,
+                ),
+              ),
             ),
             const SizedBox(height: AppSpacing.xl),
             Text(
@@ -117,8 +123,10 @@ class LoadingView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: CircularProgressIndicator(color: AppColors.violet),
+    return Center(
+      child: CircularProgressIndicator(
+        color: Theme.of(context).colorScheme.primary,
+      ),
     );
   }
 }

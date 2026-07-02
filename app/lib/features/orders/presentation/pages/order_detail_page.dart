@@ -67,12 +67,15 @@ class OrderDetailPage extends ConsumerWidget {
           (i) => ListTile(
             contentPadding: EdgeInsets.zero,
             leading: CircleAvatar(
-              backgroundColor: AppColors.background,
+              backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
               backgroundImage: i.imageUrl != null
                   ? NetworkImage(i.imageUrl!)
                   : null,
               child: i.imageUrl == null
-                  ? const Icon(Icons.image_outlined, color: AppColors.muted)
+                  ? Icon(
+                      Icons.image_outlined,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    )
                   : null,
             ),
             title: Text(i.name, maxLines: 2, overflow: TextOverflow.ellipsis),
@@ -148,7 +151,13 @@ class OrderDetailPage extends ConsumerWidget {
 
   Widget _section(BuildContext context, String title) => Padding(
     padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-    child: Text(title, style: Theme.of(context).textTheme.titleMedium),
+    child: Text(
+      title.toUpperCase(),
+      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+        letterSpacing: 1,
+        fontWeight: FontWeight.w700,
+      ),
+    ),
   );
 
   Widget _row(
@@ -196,9 +205,9 @@ class _CarrierTracking extends ConsumerWidget {
               (e) => ListTile(
                 contentPadding: EdgeInsets.zero,
                 dense: true,
-                leading: const Icon(
+                leading: Icon(
                   Icons.local_shipping_outlined,
-                  color: AppColors.violet,
+                  color: Theme.of(context).colorScheme.primary,
                   size: 20,
                 ),
                 title: Text(e.description),

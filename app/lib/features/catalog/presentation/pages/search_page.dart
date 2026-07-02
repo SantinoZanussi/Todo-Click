@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/responsive/breakpoints.dart';
+import '../../../../core/responsive/content_container.dart';
+import '../../../../core/theme/app_spacing.dart';
 import '../../../../shared/widgets/widgets.dart';
 import '../../domain/entities/product_query.dart';
 import '../controllers/catalog_providers.dart';
@@ -96,13 +99,24 @@ class _SearchPageState extends ConsumerState<SearchPage> {
         message: 'No se pudo realizar la búsqueda.',
         onRetry: () => ref.invalidate(productsQueryProvider(query)),
       ),
-      data: (products) => products.isEmpty
-          ? const EmptyStateView(
-              icon: Icons.search_off,
-              title: 'Sin resultados',
-              message: 'No encontramos productos para tu búsqueda.',
-            )
-          : ProductGrid(products: products),
+      data: (products) {
+        if (products.isEmpty) {
+          return const EmptyStateView(
+            icon: Icons.search_off,
+            title: 'Sin resultados',
+            message: 'No encontramos productos para tu búsqueda.',
+          );
+        }
+        if (context.isWide) {
+          return ContentContainer(
+            child: ProductGrid(
+              products: products,
+              padding: const EdgeInsets.symmetric(vertical: AppSpacing.xl),
+            ),
+          );
+        }
+        return ProductGrid(products: products);
+      },
     );
   }
 }

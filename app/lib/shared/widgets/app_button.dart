@@ -61,15 +61,19 @@ class AppButton extends StatelessWidget {
     return fullWidth ? SizedBox(width: double.infinity, child: button) : button;
   }
 
+  /// Estilo de marca: las etiquetas de botón van en MAYÚSCULAS (el tracking
+  /// lo aporta el `labelLarge` del tema).
+  String get _label => label.toUpperCase();
+
   Widget _content() {
-    if (icon == null) return Text(label);
+    if (icon == null) return Text(_label);
     return Row(
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Icon(icon, size: 20),
         const SizedBox(width: 8),
-        Flexible(child: Text(label, overflow: TextOverflow.ellipsis)),
+        Flexible(child: Text(_label, overflow: TextOverflow.ellipsis)),
       ],
     );
   }

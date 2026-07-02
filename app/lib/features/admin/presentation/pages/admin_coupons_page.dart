@@ -58,7 +58,9 @@ class AdminCouponsPage extends ConsumerWidget {
                   return ListTile(
                     leading: Icon(
                       Icons.local_offer,
-                      color: c.isActive ? AppColors.violet : AppColors.muted,
+                      color: c.isActive
+                          ? Theme.of(context).colorScheme.primary
+                          : Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                     title: Text(c.code),
                     subtitle: Text(

@@ -1,61 +1,92 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'app_colors.dart';
 import 'app_spacing.dart';
+import 'brand_colors.dart';
 
 /// Construcción del `ThemeData` de TodoClick (Material 3) a partir de los
 /// tokens de marca (`AppColors`). Expone temas claro y oscuro.
 ///
-/// La tipografía usa la fuente del sistema por ahora; la familia de marca
-/// (Inter) se agrega como asset en una iteración posterior sin cambiar esta
-/// estructura (solo se setea `fontFamily`).
+/// Rediseño estilo Gymshark:
+///  - Tipografía **Archivo** (grotesca moderna) vía `google_fonts`.
+///  - Alto contraste: superficies claras + acentos slate (`charcoal`).
+///  - Esquinas crujientes (radios chicos) y componentes planos (sin sombras).
+///  - Botones oscuros full-width con texto en mayúsculas y tracking amplio.
 abstract final class AppTheme {
   static ThemeData get light => _build(Brightness.light);
   static ThemeData get dark => _build(Brightness.dark);
 
+  /// Tracking (letter-spacing) para textos en mayúsculas de marca.
+  static const double _uppercaseTracking = 1.2;
+
   static ThemeData _build(Brightness brightness) {
     final isLight = brightness == Brightness.light;
 
+    // Color de acción PRIMARIO adaptativo: slate sobre fondos claros, crema
+    // sobre fondos oscuros. Así los botones (Elevated/Filled), chips y demás
+    // superficies de acción siempre resaltan y su texto nunca desaparece —
+    // el patrón "botón claro sobre slate" de Gymshark, en ambos modos.
+    final primary = isLight ? AppColors.charcoal : AppColors.cream;
+    final onPrimary = isLight ? AppColors.cream : AppColors.charcoal;
+
     final colorScheme = ColorScheme(
       brightness: brightness,
-      primary: AppColors.violet,
-      onPrimary: AppColors.white,
-      secondary: AppColors.teal,
+      primary: primary,
+      onPrimary: onPrimary,
+      secondary: AppColors.moss,
       onSecondary: AppColors.white,
-      tertiary: AppColors.royalBlue,
-      onTertiary: AppColors.white,
+      tertiary: AppColors.sage,
+      onTertiary: AppColors.charcoal,
       error: AppColors.error,
       onError: AppColors.white,
-      surface: isLight ? AppColors.surface : const Color(0xFF161A28),
-      onSurface: isLight ? AppColors.ink : const Color(0xFFE9ECF5),
+      surface: isLight ? AppColors.surface : AppColors.darkSurface,
+      onSurface: isLight ? AppColors.ink : AppColors.darkOnSurface,
+      onSurfaceVariant: isLight ? AppColors.slate : AppColors.darkMuted,
       surfaceContainerLowest: isLight
           ? AppColors.background
-          : const Color(0xFF0E111B),
+          : AppColors.darkBackground,
       surfaceContainerHighest: isLight
-          ? const Color(0xFFEEF1F7)
-          : const Color(0xFF1F2433),
-      outline: isLight ? AppColors.border : const Color(0xFF323848),
+          ? AppColors.cream
+          : AppColors.darkSurfaceHigh,
+      outline: isLight ? AppColors.border : AppColors.darkBorder,
     );
 
-    final baseText = isLight
-        ? Typography.blackMountainView
-        : Typography.whiteMountainView;
-
-    final textTheme = baseText.copyWith(
-      displayLarge: baseText.displayLarge?.copyWith(
-        fontWeight: FontWeight.w700,
-        color: colorScheme.onSurface,
-      ),
-      headlineMedium: baseText.headlineMedium?.copyWith(
-        fontWeight: FontWeight.w700,
-        color: colorScheme.onSurface,
-      ),
-      titleLarge: baseText.titleLarge?.copyWith(
-        fontWeight: FontWeight.w600,
-        color: colorScheme.onSurface,
-      ),
-      labelLarge: baseText.labelLarge?.copyWith(fontWeight: FontWeight.w600),
+    // Tipografía de marca: Archivo aplicada sobre la base del sistema.
+    final baseText = GoogleFonts.archivoTextTheme(
+      isLight ? Typography.blackMountainView : Typography.whiteMountainView,
     );
+
+    final textTheme = baseText
+        .copyWith(
+          displayLarge: baseText.displayLarge?.copyWith(
+            fontWeight: FontWeight.w800,
+            letterSpacing: -0.5,
+          ),
+          displayMedium: baseText.displayMedium?.copyWith(
+            fontWeight: FontWeight.w800,
+            letterSpacing: -0.5,
+          ),
+          headlineMedium: baseText.headlineMedium?.copyWith(
+            fontWeight: FontWeight.w800,
+            letterSpacing: -0.3,
+          ),
+          headlineSmall: baseText.headlineSmall?.copyWith(
+            fontWeight: FontWeight.w700,
+          ),
+          titleLarge: baseText.titleLarge?.copyWith(fontWeight: FontWeight.w700),
+          titleMedium: baseText.titleMedium?.copyWith(
+            fontWeight: FontWeight.w600,
+          ),
+          labelLarge: baseText.labelLarge?.copyWith(
+            fontWeight: FontWeight.w700,
+            letterSpacing: _uppercaseTracking,
+          ),
+        )
+        .apply(
+          bodyColor: colorScheme.onSurface,
+          displayColor: colorScheme.onSurface,
+        );
 
     return ThemeData(
       useMaterial3: true,
@@ -64,33 +95,51 @@ abstract final class AppTheme {
       scaffoldBackgroundColor: colorScheme.surfaceContainerLowest,
       textTheme: textTheme,
       visualDensity: VisualDensity.adaptivePlatformDensity,
+      extensions: [BrandColors.forBrightness(brightness)],
 
       appBarTheme: AppBarTheme(
         backgroundColor: colorScheme.surface,
         foregroundColor: colorScheme.onSurface,
         elevation: 0,
-        scrolledUnderElevation: 1,
+        scrolledUnderElevation: 0.5,
+        surfaceTintColor: Colors.transparent,
         centerTitle: false,
-        titleTextStyle: textTheme.titleLarge,
+        titleTextStyle: textTheme.titleLarge?.copyWith(
+          letterSpacing: 1.5,
+          fontWeight: FontWeight.w700,
+        ),
       ),
 
       cardTheme: CardThemeData(
         color: colorScheme.surface,
         elevation: 0,
         margin: EdgeInsets.zero,
+        surfaceTintColor: Colors.transparent,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppRadius.lg),
-          side: BorderSide(color: colorScheme.outline),
         ),
       ),
 
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.violet,
-          foregroundColor: AppColors.white,
+          backgroundColor: colorScheme.primary,
+          foregroundColor: colorScheme.onPrimary,
+          disabledBackgroundColor: colorScheme.onSurface.withValues(alpha: 0.12),
+          disabledForegroundColor: colorScheme.onSurface.withValues(alpha: 0.38),
           elevation: 0,
-          minimumSize: const Size.fromHeight(52),
+          minimumSize: const Size.fromHeight(54),
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppRadius.md),
+          ),
+          textStyle: textTheme.labelLarge,
+        ),
+      ),
+
+      filledButtonTheme: FilledButtonThemeData(
+        style: FilledButton.styleFrom(
+          backgroundColor: colorScheme.primary,
+          foregroundColor: colorScheme.onPrimary,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppRadius.md),
           ),
@@ -100,9 +149,9 @@ abstract final class AppTheme {
 
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          foregroundColor: AppColors.violet,
-          minimumSize: const Size.fromHeight(52),
-          side: const BorderSide(color: AppColors.violet, width: 1.5),
+          foregroundColor: colorScheme.onSurface,
+          minimumSize: const Size.fromHeight(54),
+          side: BorderSide(color: colorScheme.onSurface, width: 1.5),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppRadius.md),
           ),
@@ -111,7 +160,10 @@ abstract final class AppTheme {
       ),
 
       textButtonTheme: TextButtonThemeData(
-        style: TextButton.styleFrom(foregroundColor: AppColors.royalBlue),
+        style: TextButton.styleFrom(
+          foregroundColor: colorScheme.onSurface,
+          textStyle: textTheme.labelLarge?.copyWith(letterSpacing: 0.8),
+        ),
       ),
 
       inputDecorationTheme: InputDecorationTheme(
@@ -131,41 +183,55 @@ abstract final class AppTheme {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppRadius.md),
-          borderSide: const BorderSide(color: AppColors.violet, width: 1.5),
+          borderSide: const BorderSide(color: AppColors.charcoal, width: 1.5),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppRadius.md),
           borderSide: const BorderSide(color: AppColors.error),
         ),
-        hintStyle: TextStyle(color: AppColors.muted),
+        labelStyle: const TextStyle(color: AppColors.slate),
+        hintStyle: const TextStyle(color: AppColors.muted),
       ),
 
       chipTheme: ChipThemeData(
         backgroundColor: colorScheme.surfaceContainerHighest,
-        selectedColor: AppColors.violet,
-        labelStyle: textTheme.labelLarge,
+        selectedColor: colorScheme.primary,
+        secondarySelectedColor: colorScheme.primary,
+        checkmarkColor: colorScheme.onPrimary,
+        labelStyle: textTheme.labelLarge?.copyWith(
+          fontSize: 12,
+          letterSpacing: 0.8,
+          color: colorScheme.onSurface,
+        ),
+        secondaryLabelStyle: textTheme.labelLarge?.copyWith(
+          fontSize: 12,
+          letterSpacing: 0.8,
+          color: colorScheme.onPrimary,
+        ),
         side: BorderSide.none,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppRadius.pill),
+          borderRadius: BorderRadius.circular(AppRadius.sm),
         ),
       ),
 
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: colorScheme.surface,
-        indicatorColor: AppColors.violet.withValues(alpha: 0.14),
-        elevation: 3,
+        indicatorColor: AppColors.cream,
+        elevation: 0,
+        surfaceTintColor: Colors.transparent,
         labelTextStyle: WidgetStateProperty.resolveWith(
           (states) => textTheme.labelSmall?.copyWith(
             color: states.contains(WidgetState.selected)
-                ? AppColors.violet
+                ? AppColors.charcoal
                 : AppColors.slate,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 0.4,
           ),
         ),
         iconTheme: WidgetStateProperty.resolveWith(
           (states) => IconThemeData(
             color: states.contains(WidgetState.selected)
-                ? AppColors.violet
+                ? AppColors.charcoal
                 : AppColors.slate,
           ),
         ),
@@ -179,8 +245,11 @@ abstract final class AppTheme {
 
       snackBarTheme: SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
-        backgroundColor: AppColors.navy,
-        contentTextStyle: const TextStyle(color: AppColors.white),
+        backgroundColor: AppColors.charcoal,
+        contentTextStyle: GoogleFonts.archivo(
+          color: AppColors.cream,
+          fontWeight: FontWeight.w500,
+        ),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppRadius.md),
         ),

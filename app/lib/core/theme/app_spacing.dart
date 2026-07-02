@@ -13,10 +13,13 @@ abstract final class AppSpacing {
 }
 
 /// Radios de borde estándar.
+///
+/// Rediseño Gymshark: esquinas crujientes (casi rectas). Radios reducidos
+/// respecto de la versión anterior para un look más editorial y de marca.
 abstract final class AppRadius {
-  static const double sm = 8;
-  static const double md = 12;
-  static const double lg = 16;
-  static const double xl = 24;
+  static const double sm = 2;
+  static const double md = 4;
+  static const double lg = 8;
+  static const double xl = 12;
   static const double pill = 999;
 }

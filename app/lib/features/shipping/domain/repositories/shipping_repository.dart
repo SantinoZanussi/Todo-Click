@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 
 import '../../../../core/error/failures.dart';
+import '../entities/shipping_agency.dart';
 import '../entities/shipping_option.dart';
 import '../entities/tracking_event.dart';
 
@@ -16,4 +17,9 @@ abstract interface class ShippingRepository {
 
   /// Seguimiento de un envío por código de tracking.
   Future<Either<Failure, List<TrackingEvent>>> track(String trackingCode);
+
+  /// Sucursales de Correo Argentino de una provincia (retiro en sucursal).
+  Future<Either<Failure, List<ShippingAgency>>> agencies({
+    required String province,
+  });
 }

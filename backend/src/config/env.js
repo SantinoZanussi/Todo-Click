@@ -56,8 +56,23 @@ export const env = {
     apiBase: optional('CORREO_ARGENTINO_API_BASE'),
     user: optional('CORREO_ARGENTINO_USER'),
     password: optional('CORREO_ARGENTINO_PASSWORD'),
+    customerId: optional('CORREO_ARGENTINO_CUSTOMER_ID'),
     agreement: optional('CORREO_ARGENTINO_AGREEMENT'),
     originPostalCode: optional('SHIPPING_ORIGIN_POSTAL_CODE'),
+    // Remitente (origen) para dar de alta envíos en MiCorreo (/shipping/import).
+    sender: {
+      name: optional('SHIPPING_ORIGIN_NAME'),
+      phone: optional('SHIPPING_ORIGIN_PHONE'),
+      cellPhone: optional('SHIPPING_ORIGIN_CELLPHONE'),
+      email: optional('SHIPPING_ORIGIN_EMAIL'),
+      streetName: optional('SHIPPING_ORIGIN_STREET_NAME'),
+      streetNumber: optional('SHIPPING_ORIGIN_STREET_NUMBER'),
+      floor: optional('SHIPPING_ORIGIN_FLOOR'),
+      apartment: optional('SHIPPING_ORIGIN_APARTMENT'),
+      city: optional('SHIPPING_ORIGIN_CITY'),
+      provinceCode: optional('SHIPPING_ORIGIN_PROVINCE_CODE'),
+      postalCode: optional('SHIPPING_ORIGIN_POSTAL_CODE'),
+    },
   },
 
   // Helper para forzar la presencia de una variable en el punto de uso.

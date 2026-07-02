@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../core/theme/app_colors.dart';
 import '../../../../shared/widgets/widgets.dart';
 import '../../../catalog/domain/entities/brand.dart';
 import '../../../catalog/presentation/controllers/catalog_providers.dart';
@@ -95,7 +94,10 @@ class AdminBrandsPage extends ConsumerWidget {
           itemBuilder: (_, i) {
             final b = list[i];
             return ListTile(
-              leading: const Icon(Icons.sell, color: AppColors.violet),
+              leading: Icon(
+                Icons.sell,
+                color: Theme.of(context).colorScheme.primary,
+              ),
               title: Text(b.name),
               subtitle: Text(b.slug),
               onTap: () => _form(context, ref, b),

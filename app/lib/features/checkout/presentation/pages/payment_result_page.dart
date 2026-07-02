@@ -83,7 +83,7 @@ class _PaymentResultPageState extends ConsumerState<PaymentResultPage> {
             return _Result(
               icon: Icons.check_circle,
               color: AppColors.success,
-              title: '¡Pago aprobado! 🎉',
+              title: '¡Pago aprobado!',
               message:
                   'Tu pedido ${status.orderNumber} fue confirmado por '
                   '${Formatters.currency(status.total)}.',

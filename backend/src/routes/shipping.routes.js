@@ -24,4 +24,8 @@ router.post(
 
 router.get('/track/:code', asyncHandler(shippingController.track));
 
+// Sucursales de Correo Argentino por provincia (para envío a sucursal).
+// `?province=Buenos Aires` o `?provinceCode=B` (+ `?services=...` opcional).
+router.get('/agencies', asyncHandler(shippingController.agencies));
+
 export default router;

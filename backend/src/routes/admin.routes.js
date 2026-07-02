@@ -48,6 +48,7 @@ router.delete('/promotions/:id', asyncHandler(adminController.deletePromotion));
 // Pedidos
 router.patch('/orders/:id/status', asyncHandler(adminController.updateOrderStatus));
 router.patch('/orders/:id/tracking', asyncHandler(adminController.setOrderTracking));
+router.post('/orders/:id/ship', asyncHandler(adminController.shipOrder));
 
 // Usuarios
 router.patch('/users/:uid/role', asyncHandler(adminController.setUserRole));

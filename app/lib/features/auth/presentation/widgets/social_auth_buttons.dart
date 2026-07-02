@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 
 /// Botón de inicio de sesión social (Google / Apple) con estilo consistente.
@@ -22,7 +21,6 @@ class SocialAuthButton extends StatelessWidget {
     return SocialAuthButton(
       label: 'Continuar con Google',
       icon: Icons.g_mobiledata, // placeholder; se reemplaza por logo en assets
-      iconColor: AppColors.coral,
       onPressed: onPressed,
       enabled: enabled,
     );
@@ -36,7 +34,6 @@ class SocialAuthButton extends StatelessWidget {
     return SocialAuthButton(
       label: 'Continuar con Apple',
       icon: Icons.apple,
-      iconColor: AppColors.ink,
       onPressed: onPressed,
       enabled: enabled,
     );
@@ -50,16 +47,24 @@ class SocialAuthButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     return SizedBox(
       width: double.infinity,
       child: OutlinedButton.icon(
         onPressed: enabled ? onPressed : null,
-        icon: Icon(icon, color: iconColor, size: 24),
-        label: Text(label),
+        icon: Icon(icon, color: iconColor ?? scheme.onSurface, size: 24),
+        label: Text(
+          label.toUpperCase(),
+          style: const TextStyle(
+            fontWeight: FontWeight.w700,
+            letterSpacing: 1,
+            fontSize: 13,
+          ),
+        ),
         style: OutlinedButton.styleFrom(
-          foregroundColor: AppColors.ink,
-          side: const BorderSide(color: AppColors.border),
-          minimumSize: const Size.fromHeight(52),
+          foregroundColor: scheme.onSurface,
+          side: BorderSide(color: scheme.onSurface),
+          minimumSize: const Size.fromHeight(54),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppRadius.md),
           ),
@@ -82,7 +87,10 @@ class AuthDivider extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
           child: Text(
             'o',
-            style: TextStyle(color: AppColors.muted, fontSize: 13),
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              fontSize: 13,
+            ),
           ),
         ),
         const Expanded(child: Divider()),

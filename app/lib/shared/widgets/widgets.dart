@@ -5,6 +5,10 @@ library;
 
 export 'app_badge.dart';
 export 'app_button.dart';
+export 'app_footer.dart';
+export 'brand_placeholder.dart';
+export 'hover_scale.dart';
+export 'page_heading.dart';
 export 'price_tag.dart';
 export 'product_card.dart';
 export 'quantity_selector.dart';
