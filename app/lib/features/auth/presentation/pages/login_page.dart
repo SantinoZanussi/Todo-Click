@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/config/app_config.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
@@ -131,8 +132,10 @@ class _LoginPageState extends ConsumerState<LoginPage> {
             const AuthDivider(),
             const SizedBox(height: AppSpacing.xl),
             SocialAuthButton.google(onPressed: _google, enabled: !isLoading),
-            const SizedBox(height: AppSpacing.md),
-            SocialAuthButton.apple(onPressed: _apple, enabled: !isLoading),
+            if (AppConfig.appleSignInEnabled) ...[
+              const SizedBox(height: AppSpacing.md),
+              SocialAuthButton.apple(onPressed: _apple, enabled: !isLoading),
+            ],
             const SizedBox(height: AppSpacing.xl),
             TextButton(
               onPressed: () => context.go(AppRoutes.home),

@@ -20,7 +20,7 @@ class FavoritesPage extends ConsumerWidget {
     final wide = context.isWide;
 
     final content = favoritesAsync.when(
-      loading: () => const LoadingView(),
+      loading: () => const ProductGridSkeleton(),
       error: (_, _) => ErrorStateView(
         message: 'No se pudieron cargar tus favoritos.',
         onRetry: () => ref.invalidate(favoriteProductsProvider),

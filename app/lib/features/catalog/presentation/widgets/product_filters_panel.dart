@@ -103,63 +103,62 @@ class _ProductFiltersPanelState extends ConsumerState<ProductFiltersPanel> {
               ),
           ],
         ),
-        const SizedBox(height: AppSpacing.lg),
-
-        _label('Rango de precio'),
         const SizedBox(height: AppSpacing.sm),
-        Row(
-          children: [
-            Expanded(child: _priceField(_minCtrl, 'Mín')),
-            const SizedBox(width: AppSpacing.sm),
-            Expanded(child: _priceField(_maxCtrl, 'Máx')),
-          ],
+
+        _accordion(
+          'Rango de precio',
+          child: Row(
+            children: [
+              Expanded(child: _priceField(_minCtrl, 'Mín')),
+              const SizedBox(width: AppSpacing.sm),
+              Expanded(child: _priceField(_maxCtrl, 'Máx')),
+            ],
+          ),
         ),
-        const SizedBox(height: AppSpacing.lg),
-        const Divider(),
-        const SizedBox(height: AppSpacing.lg),
+        const Divider(height: 1),
 
-        _label('Disponibilidad'),
-        const SizedBox(height: AppSpacing.sm),
-        Wrap(
-          spacing: AppSpacing.sm,
-          runSpacing: AppSpacing.sm,
-          children: [
-            FilterChip(
-              label: const Text('En stock'),
-              selected: _q.inStockOnly,
-              onSelected: (v) => widget.onChanged(_q.copyWith(inStockOnly: v)),
-            ),
-            FilterChip(
-              label: const Text('En oferta'),
-              selected: _q.onSaleOnly,
-              onSelected: (v) => widget.onChanged(_q.copyWith(onSaleOnly: v)),
-            ),
-          ],
-        ),
-        const SizedBox(height: AppSpacing.lg),
-        const Divider(),
-        const SizedBox(height: AppSpacing.lg),
-
-        _label('Marca'),
-        const SizedBox(height: AppSpacing.sm),
-        brands.when(
-          loading: () => const LinearProgressIndicator(),
-          error: (_, _) => const SizedBox.shrink(),
-          data: (list) => DropdownButtonFormField<String?>(
-            // key para que refleje resets externos (Limpiar) del brandId.
-            key: ValueKey(_q.brandId ?? '_all'),
-            initialValue: _q.brandId,
-            isExpanded: true,
-            items: [
-              const DropdownMenuItem(value: null, child: Text('Todas')),
-              ...list.map(
-                (b) => DropdownMenuItem(value: b.id, child: Text(b.name)),
+        _accordion(
+          'Disponibilidad',
+          child: Wrap(
+            spacing: AppSpacing.sm,
+            runSpacing: AppSpacing.sm,
+            children: [
+              FilterChip(
+                label: const Text('En stock'),
+                selected: _q.inStockOnly,
+                onSelected: (v) => widget.onChanged(_q.copyWith(inStockOnly: v)),
+              ),
+              FilterChip(
+                label: const Text('En oferta'),
+                selected: _q.onSaleOnly,
+                onSelected: (v) => widget.onChanged(_q.copyWith(onSaleOnly: v)),
               ),
             ],
-            onChanged: (v) => widget.onChanged(
-              v == null
-                  ? _q.copyWith(clearBrand: true)
-                  : _q.copyWith(brandId: v),
+          ),
+        ),
+        const Divider(height: 1),
+
+        _accordion(
+          'Marca',
+          child: brands.when(
+            loading: () => const LinearProgressIndicator(),
+            error: (_, _) => const SizedBox.shrink(),
+            data: (list) => DropdownButtonFormField<String?>(
+              // key para que refleje resets externos (Limpiar) del brandId.
+              key: ValueKey(_q.brandId ?? '_all'),
+              initialValue: _q.brandId,
+              isExpanded: true,
+              items: [
+                const DropdownMenuItem(value: null, child: Text('Todas')),
+                ...list.map(
+                  (b) => DropdownMenuItem(value: b.id, child: Text(b.name)),
+                ),
+              ],
+              onChanged: (v) => widget.onChanged(
+                v == null
+                    ? _q.copyWith(clearBrand: true)
+                    : _q.copyWith(brandId: v),
+              ),
             ),
           ),
         ),
@@ -167,15 +166,31 @@ class _ProductFiltersPanelState extends ConsumerState<ProductFiltersPanel> {
     );
   }
 
-  Widget _label(String text) => Text(
-    text.toUpperCase(),
-    style: const TextStyle(
-      color: AppColors.slate,
-      fontSize: 12,
-      fontWeight: FontWeight.w700,
-      letterSpacing: 0.8,
-    ),
-  );
+  /// Grupo de filtro colapsable (acordeón), abierto por defecto y sin las
+  /// líneas divisorias propias del `ExpansionTile`.
+  Widget _accordion(String title, {required Widget child}) {
+    return Theme(
+      data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+      child: ExpansionTile(
+        title: Text(
+          title.toUpperCase(),
+          style: const TextStyle(
+            color: AppColors.slate,
+            fontSize: 12,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 0.8,
+          ),
+        ),
+        initiallyExpanded: true,
+        tilePadding: EdgeInsets.zero,
+        shape: const Border(),
+        collapsedShape: const Border(),
+        childrenPadding: const EdgeInsets.only(bottom: AppSpacing.md),
+        expandedCrossAxisAlignment: CrossAxisAlignment.start,
+        children: [child],
+      ),
+    );
+  }
 
   Widget _priceField(TextEditingController ctrl, String label) => TextField(
     controller: ctrl,

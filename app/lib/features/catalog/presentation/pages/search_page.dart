@@ -94,7 +94,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
 
     final results = ref.watch(productsQueryProvider(query));
     return results.when(
-      loading: () => const LoadingView(),
+      loading: () => const ProductGridSkeleton(),
       error: (_, _) => ErrorStateView(
         message: 'No se pudo realizar la búsqueda.',
         onRetry: () => ref.invalidate(productsQueryProvider(query)),

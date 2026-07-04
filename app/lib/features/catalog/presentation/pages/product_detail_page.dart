@@ -63,7 +63,12 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
             pinned: true,
             expandedHeight: 360,
             actions: [_favButton(product)],
-            flexibleSpace: FlexibleSpaceBar(background: _gallery(product)),
+            flexibleSpace: FlexibleSpaceBar(
+              background: Hero(
+                tag: 'product-image-${product.id}',
+                child: _gallery(product),
+              ),
+            ),
           ),
           SliverToBoxAdapter(
             child: Padding(

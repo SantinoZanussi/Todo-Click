@@ -8,6 +8,7 @@ import '../../../../core/responsive/breakpoints.dart';
 import '../../../../core/responsive/content_container.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/theme/theme_reveal.dart';
 import '../../../../shared/widgets/widgets.dart';
 import '../../../auth/domain/entities/app_user.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
@@ -19,6 +20,23 @@ class ProfilePage extends ConsumerWidget {
   const ProfilePage({super.key});
 
   static const double _maxWidth = 720;
+
+  /// Cambia el tema con el reveal circular (ver [ThemeSwitcherReveal]) desde el
+  /// centro de la pantalla. Si el reveal no está disponible, cambia directo.
+  void _switchTheme(BuildContext context, WidgetRef ref, ThemeMode mode) {
+    void apply() => ref.read(themeModeProvider.notifier).set(mode);
+    final reveal = ThemeSwitcherReveal.of(context);
+    if (reveal == null) {
+      apply();
+      return;
+    }
+    final box = context.findRenderObject() as RenderBox?;
+    final size = MediaQuery.of(context).size;
+    final origin = (box != null && box.hasSize)
+        ? box.localToGlobal(box.size.center(Offset.zero))
+        : Offset(size.width / 2, size.height / 2);
+    reveal.reveal(origin, apply);
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -44,7 +62,7 @@ class ProfilePage extends ConsumerWidget {
         const SizedBox(height: AppSpacing.xxl),
         _AppearanceSection(
           mode: themeMode,
-          onChanged: (m) => ref.read(themeModeProvider.notifier).set(m),
+          onChanged: (m) => _switchTheme(context, ref, m),
         ),
       ],
     );

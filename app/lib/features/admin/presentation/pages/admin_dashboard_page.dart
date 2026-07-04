@@ -114,13 +114,18 @@ class AdminDashboardPage extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        GridView.count(
-          crossAxisCount: context.responsive(mobile: 2, tablet: 4, desktop: 4),
+        GridView(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          crossAxisSpacing: AppSpacing.md,
-          mainAxisSpacing: AppSpacing.md,
-          childAspectRatio: 1.5,
+          // Altura FIJA por celda (no aspect-ratio): el contenido del StatCard
+          // tiene alto fijo en px, así que atarlo al ancho desbordaba en
+          // pantallas angostas. Con `mainAxisExtent` entra siempre.
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: context.responsive(mobile: 2, tablet: 4, desktop: 4),
+            crossAxisSpacing: AppSpacing.md,
+            mainAxisSpacing: AppSpacing.md,
+            mainAxisExtent: 124,
+          ),
           children: [
             StatCard(
               label: 'Ingresos totales',

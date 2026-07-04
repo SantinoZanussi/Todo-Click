@@ -40,7 +40,7 @@ class StatCard extends StatelessWidget {
               ),
               child: Icon(icon, color: color, size: 20),
             ),
-            const SizedBox(height: AppSpacing.md),
+            const SizedBox(height: AppSpacing.sm),
             Text(
               value,
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
@@ -56,6 +56,8 @@ class StatCard extends StatelessWidget {
                 letterSpacing: 0.5,
                 fontWeight: FontWeight.w600,
               ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
           ],
         ),

@@ -27,4 +27,16 @@ abstract final class AppConfig {
 
   /// `true` en builds de release.
   static const bool isProduction = bool.fromEnvironment('dart.vm.product');
+
+  /// Habilita "Continuar con Apple" en la pantalla de login.
+  ///
+  /// Desactivado por defecto: Sign in with Apple requiere la capability
+  /// "Sign in with Apple" (Xcode + App ID), que a su vez exige el Apple
+  /// Developer Program de pago. Sin eso el botón solo mostraría un error.
+  /// Cuando la cuenta y la capability estén listas, activarlo con
+  /// `--dart-define=APPLE_SIGN_IN_ENABLED=true` o cambiando el default.
+  static const bool appleSignInEnabled = bool.fromEnvironment(
+    'APPLE_SIGN_IN_ENABLED',
+    defaultValue: false,
+  );
 }

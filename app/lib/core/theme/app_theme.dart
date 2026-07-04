@@ -14,8 +14,11 @@ import 'brand_colors.dart';
 ///  - Esquinas crujientes (radios chicos) y componentes planos (sin sombras).
 ///  - Botones oscuros full-width con texto en mayúsculas y tracking amplio.
 abstract final class AppTheme {
-  static ThemeData get light => _build(Brightness.light);
-  static ThemeData get dark => _build(Brightness.dark);
+  // Se construyen UNA sola vez (lazy) y se cachean: `GoogleFonts.archivoTextTheme`
+  // y los ~12 sub-temas son costosos, y sin cachear se reconstruían en cada
+  // rebuild del MaterialApp (p. ej. al alternar claro/oscuro).
+  static final ThemeData light = _build(Brightness.light);
+  static final ThemeData dark = _build(Brightness.dark);
 
   /// Tracking (letter-spacing) para textos en mayúsculas de marca.
   static const double _uppercaseTracking = 1.2;

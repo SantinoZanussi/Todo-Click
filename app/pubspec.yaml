@@ -30,6 +30,11 @@ dependencies:
   # Navegación
   go_router: ^14.6.2
 
+  # Motion / transiciones (paquete oficial de Flutter: shared-axis, fade-through)
+  animations: ^2.0.11
+  # Skeletons de carga (efecto shimmer) para grillas del catálogo
+  shimmer: ^3.0.0
+
   # Programación funcional / igualdad de valor (capa de dominio)
   dartz: ^0.10.1
   equatable: ^2.0.7

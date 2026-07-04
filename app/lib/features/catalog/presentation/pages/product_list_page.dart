@@ -69,7 +69,7 @@ class _ProductListPageState extends ConsumerState<ProductListPage> {
 
   Widget _buildMobile(AsyncValue<List<Product>> async) {
     return async.when(
-      loading: () => const LoadingView(),
+      loading: () => const ProductGridSkeleton(),
       error: (_, _) => ErrorStateView(
         message: 'No se pudieron cargar los productos.',
         onRetry: () => ref.invalidate(productsQueryProvider(_query)),
@@ -78,17 +78,9 @@ class _ProductListPageState extends ConsumerState<ProductListPage> {
           ? _empty()
           : Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(
-                    AppSpacing.lg,
-                    AppSpacing.md,
-                    AppSpacing.lg,
-                    0,
-                  ),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: _countText(products.length),
-                  ),
+                _CollectionHeader(
+                  title: widget.args.title,
+                  count: products.length,
                 ),
                 Expanded(child: ProductGrid(products: products)),
               ],
@@ -100,7 +92,9 @@ class _ProductListPageState extends ConsumerState<ProductListPage> {
 
   Widget _buildWide(AsyncValue<List<Product>> async, {required bool sidebar}) {
     final content = async.when(
-      loading: () => const LoadingView(),
+      loading: () => const ProductGridSkeleton(
+        padding: EdgeInsets.all(AppSpacing.xl),
+      ),
       error: (_, _) => ErrorStateView(
         message: 'No se pudieron cargar los productos.',
         onRetry: () => ref.invalidate(productsQueryProvider(_query)),
@@ -171,14 +165,61 @@ class _ProductListPageState extends ConsumerState<ProductListPage> {
         : null,
   );
 
-  Widget _countText(int n) => Text(
-    '$n PRODUCTO(S)',
-    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-      color: AppColors.slate,
-      fontWeight: FontWeight.w700,
-      letterSpacing: 1,
-    ),
-  );
+}
+
+/// Encabezado de colección (mobile): kicker + título grande + cantidad. Le da
+/// a la lista el aire de "colección" de una tienda, en vez de una grilla suelta.
+class _CollectionHeader extends StatelessWidget {
+  const _CollectionHeader({required this.title, required this.count});
+
+  final String title;
+  final int count;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(
+        AppSpacing.lg,
+        AppSpacing.md,
+        AppSpacing.lg,
+        AppSpacing.md,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Text(
+            'COLECCIÓN',
+            style: TextStyle(
+              color: AppColors.moss,
+              fontWeight: FontWeight.w700,
+              fontSize: 11,
+              letterSpacing: 1.8,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            title.toUpperCase(),
+            style: theme.textTheme.headlineSmall?.copyWith(
+              fontWeight: FontWeight.w800,
+              letterSpacing: -0.3,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            '$count ${count == 1 ? 'producto' : 'productos'}',
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: scheme.onSurfaceVariant,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 0.5,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 /// Toolbar superior: contador de resultados + orden (y botón de filtros en

@@ -79,15 +79,21 @@ class AppShell extends ConsumerWidget {
             label: 'Categorías',
           ),
           NavigationDestination(
-            icon: Badge(
-              isLabelVisible: cartCount > 0,
-              label: Text('$cartCount'),
-              child: const Icon(Icons.shopping_cart_outlined),
+            icon: BounceOnChange(
+              value: cartCount,
+              child: Badge(
+                isLabelVisible: cartCount > 0,
+                label: Text('$cartCount'),
+                child: const Icon(Icons.shopping_cart_outlined),
+              ),
             ),
-            selectedIcon: Badge(
-              isLabelVisible: cartCount > 0,
-              label: Text('$cartCount'),
-              child: const Icon(Icons.shopping_cart),
+            selectedIcon: BounceOnChange(
+              value: cartCount,
+              child: Badge(
+                isLabelVisible: cartCount > 0,
+                label: Text('$cartCount'),
+                child: const Icon(Icons.shopping_cart),
+              ),
             ),
             label: 'Carrito',
           ),
@@ -378,10 +384,13 @@ class _NavIcon extends StatelessWidget {
     return IconButton(
       tooltip: tooltip,
       color: selected ? scheme.onSurface : scheme.onSurfaceVariant,
-      icon: Badge(
-        isLabelVisible: badgeCount > 0,
-        label: Text('$badgeCount'),
-        child: Icon(selected ? selectedIcon : icon),
+      icon: BounceOnChange(
+        value: badgeCount,
+        child: Badge(
+          isLabelVisible: badgeCount > 0,
+          label: Text('$badgeCount'),
+          child: Icon(selected ? selectedIcon : icon),
+        ),
       ),
       onPressed: onTap,
     );

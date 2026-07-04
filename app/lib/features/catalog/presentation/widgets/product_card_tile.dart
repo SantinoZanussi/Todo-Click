@@ -12,9 +12,18 @@ import '../../domain/entities/product.dart';
 /// carrito y la navegación al detalle. Es el tile que se usa en grillas y
 /// listas del catálogo. Sólo orquesta lógica existente (no la modifica).
 class ProductCardTile extends ConsumerWidget {
-  const ProductCardTile({required this.product, super.key});
+  const ProductCardTile({
+    required this.product,
+    this.enableHero = false,
+    super.key,
+  });
 
   final Product product;
+
+  /// Activa el `Hero` de la imagen hacia el detalle. Solo debe ser `true` en
+  /// pantallas donde el producto aparece una única vez (grillas), nunca en el
+  /// Home (varios carruseles podrían repetir el producto → tag duplicado).
+  final bool enableHero;
 
   void _quickAdd(BuildContext context, WidgetRef ref) {
     ref.read(cartControllerProvider.notifier).addProduct(product);
@@ -34,6 +43,7 @@ class ProductCardTile extends ConsumerWidget {
     return ProductCard(
       product: product,
       isFavorite: favorites.contains(product.id),
+      heroTag: enableHero ? 'product-image-${product.id}' : null,
       onFavoriteToggle: () =>
           ref.read(favoritesControllerProvider.notifier).toggle(product.id),
       onQuickAdd: () => _quickAdd(context, ref),

@@ -7,6 +7,7 @@ import 'constants/app_constants.dart';
 import 'di/app_providers.dart';
 import 'router/app_router.dart';
 import 'theme/app_theme.dart';
+import 'theme/theme_reveal.dart';
 
 /// Widget raíz de TodoClick.
 ///
@@ -27,6 +28,11 @@ class TodoClickApp extends ConsumerWidget {
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
       themeMode: themeMode,
+      // El cambio de tema se aplica INSTANTÁNEO por debajo (sin `ThemeData.lerp`
+      // por frame, que reconstruye todo el árbol ~20 veces y laguea en debug).
+      // La transición visual la da el reveal circular de [ThemeSwitcherReveal].
+      themeAnimationDuration: Duration.zero,
+      builder: (context, child) => ThemeSwitcherReveal(child: child!),
       routerConfig: router,
 
       // Localización

@@ -131,6 +131,7 @@ class HomePage extends ConsumerWidget {
             // 4 · Destacados
             _Showcase(
               title: 'Destacados',
+              kicker: 'Selección',
               subtitle: 'Lo nuevo de esta temporada',
               async: featured,
               wide: wide,
@@ -156,6 +157,7 @@ class HomePage extends ConsumerWidget {
             // 6 · Ofertas
             _Showcase(
               title: 'Ofertas',
+              kicker: 'Sale',
               subtitle: 'Descuentos por tiempo limitado',
               async: onSale,
               wide: wide,
@@ -170,7 +172,15 @@ class HomePage extends ConsumerWidget {
             ),
             SizedBox(height: sectionGap),
 
-            // 7 · Newsletter (full-bleed crema) + 8 · Footer
+            // 7 · Descubrí más (tabs por categoría)
+            _TabbedDiscovery(
+              wide: wide,
+              maxWidth: _homeMaxWidth,
+              onOpenCategory: (id, name) => _openCategory(context, id, name),
+            ),
+            SizedBox(height: sectionGap),
+
+            // 8 · Newsletter (full-bleed crema) + footer
             const _Newsletter(),
             const AppFooter(),
           ],
@@ -403,41 +413,70 @@ class _MobileHero extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      color: AppColors.charcoal,
-      padding: const EdgeInsets.fromLTRB(
-        AppSpacing.xl,
-        AppSpacing.xxxl,
-        AppSpacing.xl,
-        AppSpacing.xxxl,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const _Kicker('Nueva temporada'),
-          const SizedBox(height: AppSpacing.md),
-          const Text(
-            'TODO,\nA UN CLICK',
-            style: TextStyle(
-              color: AppColors.cream,
-              fontSize: 44,
-              height: 0.98,
-              fontWeight: FontWeight.w800,
-              letterSpacing: -1.5,
+    return ClipRect(
+      child: ColoredBox(
+        color: AppColors.charcoal,
+        child: Stack(
+          children: [
+            // Glifo fantasma de marca: rompe la planicie del bloque slate.
+            Positioned(
+              right: -34,
+              top: -20,
+              child: Icon(
+                Icons.shopping_bag_outlined,
+                size: 190,
+                color: AppColors.cream.withValues(alpha: 0.05),
+              ),
             ),
-          ),
-          const SizedBox(height: AppSpacing.md),
-          const Text(
-            'Miles de productos con envío a todo el país.',
-            style: TextStyle(color: Color(0xCCEBF4DD), fontSize: 15, height: 1.4),
-          ),
-          const SizedBox(height: AppSpacing.xl),
-          _LightButton(label: 'Explorar catálogo', onTap: onExplore, expand: true),
-          const SizedBox(height: AppSpacing.md),
-          _OutlineLightButton(label: 'Ver ofertas', onTap: onOffers, expand: true),
-        ],
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.xl,
+                AppSpacing.xxxl,
+                AppSpacing.xl,
+                AppSpacing.xxxl,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const _Kicker('Nueva temporada'),
+                  const SizedBox(height: AppSpacing.md),
+                  const Text(
+                    'TODO,\nA UN CLICK',
+                    style: TextStyle(
+                      color: AppColors.cream,
+                      fontSize: 44,
+                      height: 0.98,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: -1.5,
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  const Text(
+                    'Miles de productos con envío a todo el país.',
+                    style: TextStyle(
+                      color: Color(0xCCEBF4DD),
+                      fontSize: 15,
+                      height: 1.4,
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.xl),
+                  _LightButton(
+                    label: 'Explorar catálogo',
+                    onTap: onExplore,
+                    expand: true,
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  _OutlineLightButton(
+                    label: 'Ver ofertas',
+                    onTap: onOffers,
+                    expand: true,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -595,7 +634,11 @@ class _CategorySection extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SectionHeader(title: 'Comprá por categoría'),
+              const SectionHeader(
+                title: 'Comprá por categoría',
+                kicker: 'Explorá',
+                subtitle: 'Encontrá lo que buscás por rubro',
+              ),
               const SizedBox(height: AppSpacing.lg),
               if (wide)
                 _CategoryMosaic(categories: shown, onOpen: onOpen)
@@ -641,6 +684,7 @@ class _CategoryMosaic extends StatelessWidget {
             itemBuilder: (_, i) => CategoryTile(
               category: rest[i],
               tone: categoryToneAt(i + 1),
+              labelBelow: true,
               onTap: () => onOpen(rest[i]),
             ),
           ),
@@ -690,6 +734,7 @@ class _CategoryRail extends StatelessWidget {
 class _Showcase extends StatelessWidget {
   const _Showcase({
     required this.title,
+    required this.kicker,
     required this.subtitle,
     required this.async,
     required this.wide,
@@ -700,6 +745,7 @@ class _Showcase extends StatelessWidget {
   });
 
   final String title;
+  final String kicker;
   final String subtitle;
   final AsyncValue<List<Product>> async;
   final bool wide;
@@ -780,6 +826,7 @@ class _Showcase extends StatelessWidget {
   Widget _shell(BuildContext context, Widget child) {
     final header = SectionHeader(
       title: title,
+      kicker: kicker,
       actionLabel: 'Ver todo',
       onAction: onSeeAll,
     );
@@ -867,6 +914,211 @@ class _CollectionCard extends StatelessWidget {
               ),
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+// ===========================================================================
+// 7 · DESCUBRÍ MÁS (tabs por categoría)
+// ===========================================================================
+
+/// Sección interactiva con pills de categoría: al tocar una, cambia la fila de
+/// productos debajo (estilo "ESPERA, HAY MÁS…" de Gymshark). Reusa
+/// `productsQueryProvider` por categoría; no toca lógica.
+class _TabbedDiscovery extends ConsumerStatefulWidget {
+  const _TabbedDiscovery({
+    required this.wide,
+    required this.maxWidth,
+    required this.onOpenCategory,
+  });
+
+  final bool wide;
+  final double maxWidth;
+  final void Function(String id, String name) onOpenCategory;
+
+  @override
+  ConsumerState<_TabbedDiscovery> createState() => _TabbedDiscoveryState();
+}
+
+class _TabbedDiscoveryState extends ConsumerState<_TabbedDiscovery> {
+  String? _selectedId;
+
+  @override
+  Widget build(BuildContext context) {
+    final categoriesAsync = ref.watch(categoriesProvider);
+    return categoriesAsync.maybeWhen(
+      orElse: () => const SizedBox.shrink(),
+      data: (list) {
+        final featured = list.where((c) => c.isFeatured).toList();
+        final cats = (featured.isEmpty ? list : featured).take(6).toList();
+        if (cats.length < 2) return const SizedBox.shrink();
+        final selectedId =
+            cats.any((c) => c.id == _selectedId) ? _selectedId! : cats.first.id;
+        final selected = cats.firstWhere((c) => c.id == selectedId);
+        final productsAsync = ref.watch(
+          productsQueryProvider(ProductQuery(categoryId: selectedId)),
+        );
+
+        final header = SectionHeader(
+          title: 'Descubrí más',
+          kicker: 'Para vos',
+          actionLabel: 'Ver todo',
+          onAction: () => widget.onOpenCategory(selected.id, selected.name),
+        );
+        final pills = _CategoryPills(
+          categories: cats,
+          selectedId: selectedId,
+          onSelect: (id) => setState(() => _selectedId = id),
+        );
+        final content = productsAsync.when(
+          loading: () => SizedBox(
+            height: widget.wide ? 340 : 272,
+            child: const LoadingView(),
+          ),
+          error: (_, _) => const SizedBox.shrink(),
+          data: (items) {
+            if (items.isEmpty) return _EmptyDiscovery(name: selected.name);
+            return widget.wide
+                ? _grid(items)
+                : ProductCarousel(products: items);
+          },
+        );
+
+        if (widget.wide) {
+          return ContentContainer(
+            maxWidth: widget.maxWidth,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                header,
+                const SizedBox(height: AppSpacing.md),
+                pills,
+                const SizedBox(height: AppSpacing.lg),
+                content,
+              ],
+            ),
+          );
+        }
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+              child: header,
+            ),
+            const SizedBox(height: AppSpacing.md),
+            pills,
+            const SizedBox(height: AppSpacing.md),
+            content,
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _grid(List<Product> items) {
+    final maxCols = context.responsive(mobile: 2, tablet: 3, desktop: 4);
+    final shown = items.take(maxCols).toList();
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        const crossSpacing = AppSpacing.lg;
+        final cols = math.min(maxCols, shown.length);
+        if (cols == 0) return const SizedBox.shrink();
+        final cellWidth =
+            (constraints.maxWidth - crossSpacing * (cols - 1)) / cols;
+        return GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          padding: EdgeInsets.zero,
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: cols,
+            crossAxisSpacing: crossSpacing,
+            mainAxisSpacing: AppSpacing.xxl,
+            mainAxisExtent: ProductCard.heightForWidth(cellWidth),
+          ),
+          itemCount: shown.length,
+          itemBuilder: (_, i) => ProductCardTile(product: shown[i]),
+        );
+      },
+    );
+  }
+}
+
+/// Fila de pills de categoría (seleccionable). Selección = pill de acento.
+class _CategoryPills extends StatelessWidget {
+  const _CategoryPills({
+    required this.categories,
+    required this.selectedId,
+    required this.onSelect,
+  });
+
+  final List<Category> categories;
+  final String selectedId;
+  final void Function(String id) onSelect;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return SizedBox(
+      height: 40,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        padding: EdgeInsets.symmetric(
+          horizontal: context.isWide ? 0 : AppSpacing.lg,
+        ),
+        itemCount: categories.length,
+        separatorBuilder: (_, _) => const SizedBox(width: AppSpacing.sm),
+        itemBuilder: (_, i) {
+          final c = categories[i];
+          final sel = c.id == selectedId;
+          return GestureDetector(
+            onTap: () => onSelect(c.id),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 160),
+              alignment: Alignment.center,
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+              decoration: BoxDecoration(
+                color: sel ? scheme.primary : scheme.surface,
+                borderRadius: BorderRadius.circular(AppRadius.pill),
+                border: Border.all(
+                  color: sel ? scheme.primary : scheme.outline,
+                ),
+              ),
+              child: Text(
+                c.name.toUpperCase(),
+                style: TextStyle(
+                  color: sel ? scheme.onPrimary : scheme.onSurface,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 12,
+                  letterSpacing: 0.5,
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _EmptyDiscovery extends StatelessWidget {
+  const _EmptyDiscovery({required this.name});
+
+  final String name;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 120,
+      alignment: Alignment.center,
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+      child: Text(
+        'Todavía no hay productos en $name.',
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
         ),
       ),
     );

@@ -53,7 +53,10 @@ class ProductGrid extends StatelessWidget {
             mainAxisExtent: ProductCard.heightForWidth(cellWidth),
           ),
           itemCount: products.length,
-          itemBuilder: (_, i) => ProductCardTile(product: products[i]),
+          itemBuilder: (_, i) => EntranceItem(
+            index: i,
+            child: ProductCardTile(product: products[i], enableHero: true),
+          ),
         );
       },
     );

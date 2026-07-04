@@ -25,25 +25,90 @@ const List<CategoryTone> kCategoryTones = [
 CategoryTone categoryToneAt(int index) =>
     kCategoryTones[index % kCategoryTones.length];
 
-/// Tile de categoría **editorial** (vertical): imagen a sangre con velo — o, si
-/// no hay foto, un fondo de marca sólido — con el nombre en mayúsculas
-/// superpuesto y un ícono sutil. Reemplaza los viejos swatches con gradiente.
+/// Tile de categoría **editorial** (vertical). Dos variantes:
+///  - superpuesta (por defecto): imagen/color a sangre con el nombre encima.
+///  - `labelBelow`: bloque de imagen/color arriba y el nombre debajo (estilo
+///    "MEN'S FAVORITES" de Gymshark), más limpio con fotografía.
 class CategoryTile extends StatelessWidget {
   const CategoryTile({
     required this.category,
     required this.tone,
     this.onTap,
+    this.labelBelow = false,
     super.key,
   });
 
   final Category category;
   final CategoryTone tone;
   final VoidCallback? onTap;
+  final bool labelBelow;
+
+  bool get _hasImage =>
+      category.imageUrl != null && category.imageUrl!.isNotEmpty;
 
   @override
   Widget build(BuildContext context) {
-    final hasImage =
-        category.imageUrl != null && category.imageUrl!.isNotEmpty;
+    return labelBelow ? _labelBelow(context) : _overlaid();
+  }
+
+  /// Bloque de fondo: imagen (cover) o color de marca con ícono centrado.
+  Widget _blockContent() {
+    if (_hasImage) {
+      return CachedNetworkImage(
+        imageUrl: category.imageUrl!,
+        fit: BoxFit.cover,
+        errorWidget: (_, _, _) => _colorBlock(),
+      );
+    }
+    return _colorBlock();
+  }
+
+  Widget _colorBlock() {
+    return ColoredBox(
+      color: tone.background,
+      child: Center(
+        child: Icon(
+          categoryIcon(category.iconName),
+          size: 40,
+          color: tone.foreground.withValues(alpha: 0.5),
+        ),
+      ),
+    );
+  }
+
+  Widget _labelBelow(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return HoverScale(
+      child: Pressable(
+        onTap: onTap,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(AppRadius.lg),
+                child: _blockContent(),
+              ),
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            Text(
+              category.name.toUpperCase(),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                color: scheme.onSurface,
+                fontWeight: FontWeight.w800,
+                fontSize: 13,
+                letterSpacing: 0.5,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _overlaid() {
     return HoverScale(
       child: ClipRRect(
         borderRadius: BorderRadius.circular(AppRadius.lg),
@@ -54,13 +119,13 @@ class CategoryTile extends StatelessWidget {
             child: Stack(
               fit: StackFit.expand,
               children: [
-                if (hasImage)
+                if (_hasImage)
                   CachedNetworkImage(
                     imageUrl: category.imageUrl!,
                     fit: BoxFit.cover,
                     errorWidget: (_, _, _) => const SizedBox.shrink(),
                   ),
-                if (hasImage)
+                if (_hasImage)
                   const DecoratedBox(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
@@ -77,7 +142,7 @@ class CategoryTile extends StatelessWidget {
                   child: Icon(
                     categoryIcon(category.iconName),
                     size: 26,
-                    color: (hasImage ? AppColors.cream : tone.foreground)
+                    color: (_hasImage ? AppColors.cream : tone.foreground)
                         .withValues(alpha: 0.55),
                   ),
                 ),
@@ -90,7 +155,7 @@ class CategoryTile extends StatelessWidget {
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      color: hasImage ? AppColors.cream : tone.foreground,
+                      color: _hasImage ? AppColors.cream : tone.foreground,
                       fontWeight: FontWeight.w800,
                       fontSize: 15,
                       letterSpacing: 0.3,

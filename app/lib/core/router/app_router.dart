@@ -1,3 +1,4 @@
+import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -43,6 +44,46 @@ final _cartNavigatorKey = GlobalKey<NavigatorState>();
 final _favoritesNavigatorKey = GlobalKey<NavigatorState>();
 final _profileNavigatorKey = GlobalKey<NavigatorState>();
 
+/// Página con transición **shared-axis horizontal** (Material motion) para las
+/// rutas full-screen: al navegar "hacia adentro" la entrante entra desde la
+/// derecha y la saliente se va con un fundido. Sutil y consistente en toda la
+/// app. Se usa vía `pageBuilder` en cada [GoRoute] de nivel superior.
+CustomTransitionPage<void> _axisPage(GoRouterState state, Widget child) {
+  return CustomTransitionPage<void>(
+    key: state.pageKey,
+    transitionDuration: const Duration(milliseconds: 300),
+    reverseTransitionDuration: const Duration(milliseconds: 250),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+        SharedAxisTransition(
+          animation: animation,
+          secondaryAnimation: secondaryAnimation,
+          transitionType: SharedAxisTransitionType.horizontal,
+          fillColor: Theme.of(context).scaffoldBackgroundColor,
+          child: child,
+        ),
+    child: child,
+  );
+}
+
+/// Página con **fade-through** (cruce por el fondo). Se usa en el detalle de
+/// producto para que el `Hero` de la imagen sea el protagonista del cambio
+/// (la card se "expande" hacia el detalle) sin competir con un deslizamiento.
+CustomTransitionPage<void> _fadePage(GoRouterState state, Widget child) {
+  return CustomTransitionPage<void>(
+    key: state.pageKey,
+    transitionDuration: const Duration(milliseconds: 350),
+    reverseTransitionDuration: const Duration(milliseconds: 300),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+        FadeThroughTransition(
+          animation: animation,
+          secondaryAnimation: secondaryAnimation,
+          fillColor: Theme.of(context).scaffoldBackgroundColor,
+          child: child,
+        ),
+    child: child,
+  );
+}
+
 /// Provider del router de la app.
 ///
 /// Observa [authStateProvider] mediante un `refreshListenable` para re-evaluar
@@ -86,120 +127,137 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.login,
         parentNavigatorKey: _rootNavigatorKey,
-        builder: (_, _) => const LoginPage(),
+        pageBuilder: (_, state) => _axisPage(state, const LoginPage()),
       ),
       GoRoute(
         path: AppRoutes.register,
         parentNavigatorKey: _rootNavigatorKey,
-        builder: (_, _) => const RegisterPage(),
+        pageBuilder: (_, state) => _axisPage(state, const RegisterPage()),
       ),
       GoRoute(
         path: AppRoutes.forgotPassword,
         parentNavigatorKey: _rootNavigatorKey,
-        builder: (_, _) => const ForgotPasswordPage(),
+        pageBuilder: (_, state) => _axisPage(state, const ForgotPasswordPage()),
       ),
 
       // Catálogo: full-screen sobre el shell.
       GoRoute(
         path: AppRoutes.productList,
         parentNavigatorKey: _rootNavigatorKey,
-        builder: (_, state) {
+        pageBuilder: (_, state) {
           final args = state.extra as ProductListArgs?;
-          return ProductListPage(
-            args:
-                args ??
-                const ProductListArgs(
-                  title: 'Productos',
-                  query: ProductQuery(),
-                ),
+          return _axisPage(
+            state,
+            ProductListPage(
+              args:
+                  args ??
+                  const ProductListArgs(
+                    title: 'Productos',
+                    query: ProductQuery(),
+                  ),
+            ),
           );
         },
       ),
       GoRoute(
         path: AppRoutes.search,
         parentNavigatorKey: _rootNavigatorKey,
-        builder: (_, _) => const SearchPage(),
+        pageBuilder: (_, state) => _axisPage(state, const SearchPage()),
       ),
       GoRoute(
         path: AppRoutes.productDetail,
         parentNavigatorKey: _rootNavigatorKey,
-        builder: (_, state) =>
-            ProductDetailPage(productId: state.pathParameters['id']!),
+        pageBuilder: (_, state) => _fadePage(
+          state,
+          ProductDetailPage(productId: state.pathParameters['id']!),
+        ),
       ),
       GoRoute(
         path: AppRoutes.checkout,
         parentNavigatorKey: _rootNavigatorKey,
-        builder: (_, _) => const CheckoutPage(),
+        pageBuilder: (_, state) => _axisPage(state, const CheckoutPage()),
       ),
       GoRoute(
         path: AppRoutes.paymentResult,
         parentNavigatorKey: _rootNavigatorKey,
-        builder: (_, state) =>
-            PaymentResultPage(orderId: state.pathParameters['orderId']!),
+        pageBuilder: (_, state) => _axisPage(
+          state,
+          PaymentResultPage(orderId: state.pathParameters['orderId']!),
+        ),
       ),
       GoRoute(
         path: AppRoutes.orders,
         parentNavigatorKey: _rootNavigatorKey,
-        builder: (_, _) => const OrdersPage(),
+        pageBuilder: (_, state) => _axisPage(state, const OrdersPage()),
       ),
       GoRoute(
         path: AppRoutes.notifications,
         parentNavigatorKey: _rootNavigatorKey,
-        builder: (_, _) => const NotificationsPage(),
+        pageBuilder: (_, state) => _axisPage(state, const NotificationsPage()),
       ),
       GoRoute(
         path: AppRoutes.orderDetail,
         parentNavigatorKey: _rootNavigatorKey,
-        builder: (_, state) =>
-            OrderDetailPage(orderId: state.pathParameters['id']!),
+        pageBuilder: (_, state) => _axisPage(
+          state,
+          OrderDetailPage(orderId: state.pathParameters['id']!),
+        ),
       ),
 
       // Panel de administración (full-screen, protegido por el guard de rol).
       GoRoute(
         path: AppRoutes.admin,
         parentNavigatorKey: _rootNavigatorKey,
-        builder: (_, _) => const AdminDashboardPage(),
+        pageBuilder: (_, state) => _axisPage(state, const AdminDashboardPage()),
       ),
       GoRoute(
         path: AppRoutes.adminProducts,
         parentNavigatorKey: _rootNavigatorKey,
-        builder: (_, _) => const AdminProductsPage(),
+        pageBuilder: (_, state) => _axisPage(state, const AdminProductsPage()),
       ),
       GoRoute(
         path: AppRoutes.adminOrders,
         parentNavigatorKey: _rootNavigatorKey,
-        builder: (_, _) => const AdminOrdersPage(),
+        pageBuilder: (_, state) => _axisPage(state, const AdminOrdersPage()),
       ),
       GoRoute(
         path: AppRoutes.adminCategories,
         parentNavigatorKey: _rootNavigatorKey,
-        builder: (_, _) => const AdminCategoriesPage(),
+        pageBuilder: (_, state) =>
+            _axisPage(state, const AdminCategoriesPage()),
       ),
       GoRoute(
         path: AppRoutes.adminBrands,
         parentNavigatorKey: _rootNavigatorKey,
-        builder: (_, _) => const AdminBrandsPage(),
+        pageBuilder: (_, state) => _axisPage(state, const AdminBrandsPage()),
       ),
       GoRoute(
         path: AppRoutes.adminCoupons,
         parentNavigatorKey: _rootNavigatorKey,
-        builder: (_, _) => const AdminCouponsPage(),
+        pageBuilder: (_, state) => _axisPage(state, const AdminCouponsPage()),
       ),
       GoRoute(
         path: AppRoutes.adminPromotions,
         parentNavigatorKey: _rootNavigatorKey,
-        builder: (_, _) => const AdminPromotionsPage(),
+        pageBuilder: (_, state) =>
+            _axisPage(state, const AdminPromotionsPage()),
       ),
       GoRoute(
         path: AppRoutes.adminUsers,
         parentNavigatorKey: _rootNavigatorKey,
-        builder: (_, _) => const AdminUsersPage(),
+        pageBuilder: (_, state) => _axisPage(state, const AdminUsersPage()),
       ),
 
-      // Shell con bottom nav (5 ramas con estado independiente).
-      StatefulShellRoute.indexedStack(
+      // Shell con bottom nav (5 ramas con estado independiente). El cambio de
+      // pestaña hace un fundido cruzado suave (ver [_AnimatedBranchContainer]).
+      StatefulShellRoute(
         builder: (_, _, navigationShell) =>
             AppShell(navigationShell: navigationShell),
+        navigatorContainerBuilder: (_, navigationShell, children) =>
+            _AnimatedBranchContainer(
+              currentIndex: navigationShell.currentIndex,
+              children: children,
+            ),
         branches: [
           StatefulShellBranch(
             navigatorKey: _homeNavigatorKey,
@@ -253,3 +311,38 @@ final routerProvider = Provider<GoRouter>((ref) {
         Scaffold(body: Center(child: Text('Ruta no encontrada: ${state.uri}'))),
   );
 });
+
+/// Contenedor de las ramas del shell (bottom nav) con **fundido cruzado** al
+/// cambiar de pestaña. Mantiene todas las ramas vivas (preserva el stack de
+/// cada una, igual que un `IndexedStack`), pero solo la activa es visible,
+/// interactiva y "tickea" animaciones.
+class _AnimatedBranchContainer extends StatelessWidget {
+  const _AnimatedBranchContainer({
+    required this.currentIndex,
+    required this.children,
+  });
+
+  final int currentIndex;
+  final List<Widget> children;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        for (var i = 0; i < children.length; i++)
+          AnimatedOpacity(
+            opacity: i == currentIndex ? 1 : 0,
+            duration: const Duration(milliseconds: 250),
+            curve: Curves.easeInOut,
+            child: IgnorePointer(
+              ignoring: i != currentIndex,
+              child: TickerMode(
+                enabled: i == currentIndex,
+                child: children[i],
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+}

@@ -23,6 +23,7 @@ class ProductCard extends StatefulWidget {
     this.onFavoriteToggle,
     this.onQuickAdd,
     this.isFavorite = false,
+    this.heroTag,
     super.key,
   });
 
@@ -31,6 +32,11 @@ class ProductCard extends StatefulWidget {
   final VoidCallback? onFavoriteToggle;
   final VoidCallback? onQuickAdd;
   final bool isFavorite;
+
+  /// Si se provee, la imagen se envuelve en un [Hero] con este tag para que
+  /// "vuele" hacia el detalle. Debe ser único por pantalla (lo activan solo las
+  /// grillas donde cada producto aparece una vez).
+  final Object? heroTag;
 
   /// Proporción de la imagen (ancho/alto). Ligeramente vertical = más editorial.
   static const double imageAspectRatio = 0.82;
@@ -49,6 +55,7 @@ class ProductCard extends StatefulWidget {
 
 class _ProductCardState extends State<ProductCard> {
   bool _hover = false;
+  bool _pressed = false;
 
   Product get _product => widget.product;
 
@@ -64,10 +71,17 @@ class _ProductCardState extends State<ProductCard> {
       onExit: (_) => setState(() => _hover = false),
       child: GestureDetector(
         onTap: widget.onTap,
+        onTapDown: (_) => setState(() => _pressed = true),
+        onTapUp: (_) => setState(() => _pressed = false),
+        onTapCancel: () => setState(() => _pressed = false),
         behavior: HitTestBehavior.opaque,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+        child: AnimatedScale(
+          scale: _pressed ? 0.94 : 1.0,
+          duration: const Duration(milliseconds: 120),
+          curve: Curves.easeOut,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
             Expanded(
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(AppRadius.lg),
@@ -80,7 +94,9 @@ class _ProductCardState extends State<ProductCard> {
                         scale: _hover ? 1.06 : 1.0,
                         duration: const Duration(milliseconds: 350),
                         curve: Curves.easeOut,
-                        child: _image(),
+                        child: widget.heroTag == null
+                            ? _image()
+                            : Hero(tag: widget.heroTag!, child: _image()),
                       ),
                       Positioned(
                         top: AppSpacing.sm,
@@ -102,6 +118,7 @@ class _ProductCardState extends State<ProductCard> {
             const SizedBox(height: AppSpacing.md),
             _info(scheme),
           ],
+        ),
         ),
       ),
     );
@@ -147,11 +164,18 @@ class _ProductCardState extends State<ProductCard> {
     );
   }
 
+  /// Producto cargado en las últimas 3 semanas → merece la etiqueta "NUEVO".
+  bool get _isNew {
+    final days = DateTime.now().difference(_product.createdAt).inDays;
+    return days >= 0 && days <= 21;
+  }
+
   Widget _badges() {
     if (!_product.hasStock) return AppBadge.outOfStock();
     if (_product.isOnSale && _product.discountPercentage > 0) {
       return AppBadge.sale('-${_product.discountPercentage.round()}%');
     }
+    if (_isNew) return AppBadge.isNew();
     if (_product.isFeatured) return AppBadge.featured();
     return const SizedBox.shrink();
   }
@@ -164,9 +188,18 @@ class _ProductCardState extends State<ProductCard> {
       child: IconButton(
         iconSize: 18,
         visualDensity: VisualDensity.compact,
-        icon: Icon(
-          widget.isFavorite ? Icons.favorite : Icons.favorite_border,
-          color: widget.isFavorite ? AppColors.coral : AppColors.charcoal,
+        icon: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 450),
+          switchInCurve: Curves.elasticOut,
+          transitionBuilder: (child, anim) => ScaleTransition(
+            scale: anim,
+            child: child,
+          ),
+          child: Icon(
+            widget.isFavorite ? Icons.favorite : Icons.favorite_border,
+            key: ValueKey(widget.isFavorite),
+            color: widget.isFavorite ? AppColors.coral : AppColors.charcoal,
+          ),
         ),
         onPressed: widget.onFavoriteToggle,
       ),
